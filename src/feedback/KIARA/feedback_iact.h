@@ -490,3 +490,93 @@ runner_iact_nonsym_feedback_apply(
 }
 
 #endif /* SWIFT_KIARA_FEEDBACK_IACT_H */
+/**                                                                                                                                                                            
+ * @brief Feedback interaction between wind - gas particles (non-symmetric).                                                                                                          
+ * Used for updating properties of gas particles neighbouring a star particle                                                                                                  
+ *                                                                                                                                                                             
+ * @param r2 Comoving square distance between the two particles.                                                                                                               
+ * @param dx Comoving vector separating both particles (pi - pj).                                                                                                              
+ * @param hi Comoving smoothing-length of particle i.                                                                                                                          
+ * @param hj Comoving smoothing-length of particle j.                                                                                                                          
+ * @param pi First (wind/gas) particle (not updated).                                                                                                                          
+ * @param pj Second (gas) particle.                                                                                                                                           
+ * @param xpj Extra particle data                                                                                                                                               
+ * @param cosmo The cosmological model.                                                                                                                                        
+ * @param fb_props Properties of the feedback scheme.                                                                                                                          
+ * @param ti_current Current integer time used value for seeding random number generator                                                                                       
+ * */
+__attribute__((always_inline)) INLINE static void
+runner_iact_nonsym_wind_hydro(
+    const float r2, const float dx[3], const float hi, const float hj,
+    struct part *restrict pi, struct part *restrict pj, struct xpart *xpj,
+    const struct cosmology *cosmo, const struct hydro_props *hydro_props,
+    const struct feedback_props *fb_props,
+    const integertime_t ti_current) {
+
+  /* Ignore COUPLED particles */
+  if (pi->feedback_data.decoupling_delay_time == 0.f) return;
+
+  /* Wind particle density */
+  const float rho_j = hydro_get_comoving_density(pi);
+  if (rho_j <= 0.f) return;
+
+  /* Get r. */
+  const float r = sqrtf(r2);
+
+  /* Compute the kernel function */
+  const float hi_inv = 1.0f / hi;
+  const float ui = r * hi_inv;
+  float wi;
+  kernel_eval(ui, &wi);
+  warning("Firehose test kernel:");
+  fprintf(stderr, "%f", wi);
+  return;
+
+}
+
+
+
+/**
+ * @brief Feedback interaction between wind - gas particles (symmetric).
+ * Used for updating properties of gas particles neighbouring a star particle                                                                                                 
+ *                                                                                                                                                                             
+ * @param r2 Comoving square distance between the two particles.                                                                                                               
+ * @param dx Comoving vector separating both particles (pi - pj).                                                                                                              
+ * @param hi Comoving smoothing-length of particle i.                                                                                                                          
+ * @param hj Comoving smoothing-length of particle j.                                                                                                                          
+ * @param pi First (wind/gas) particle (not updated).                                                                                                                          
+ * @param pj Second (gas) particle.                                                                                                                                            
+ * @param xpj Extra particle data                                                                                                                                              
+ * @param cosmo The cosmological model.                                                                                                                                        
+ * @param fb_props Properties of the feedback scheme.                                                                                                                          
+ * @param ti_current Current integer time used value for seeding random number generator                                                                                       
+ * */
+__attribute__((always_inline)) INLINE static void
+runner_iact_sym_wind_hydro(
+    const float r2, const float dx[3], const float hi, const float hj,
+    struct part *restrict pi, struct part *restrict pj, struct xpart *xpj,
+    const struct cosmology *cosmo, const struct hydro_props *hydro_props,
+    const struct feedback_props *fb_props,
+    const integertime_t ti_current) {
+
+  /* Ignore COUPLED particles */
+  if (pi->feedback_data.decoupling_delay_time == 0.f) return;
+
+  /* Wind particle density */
+  const float rho_j = hydro_get_comoving_density(pi);
+  if (rho_j <= 0.f) return;
+
+  /* Get r. */
+  const float r = sqrtf(r2);
+
+  /* Compute the kernel function */
+  const float hi_inv = 1.0f / hi;
+  const float ui = r * hi_inv;
+  float wi;
+  kernel_eval(ui, &wi);
+  warning("Firehose test kernel: ");
+  fprintf(stderr, "%f", wi);
+
+  return;
+
+}
