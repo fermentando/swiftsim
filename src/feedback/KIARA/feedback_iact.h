@@ -26,6 +26,12 @@
 #include "timestep_sync_part.h"
 #include "tools.h"
 #include "tracers.h"
+#include "physical_constants.h"
+#include "units.h"
+#include "cooling.h"
+#include "grackle.h"
+#include "hydro.h"
+
 
 /**
  * @brief Compute the mean DM velocity around a star. (non-symmetric).
@@ -275,6 +281,7 @@ feedback_kick_gas_around_star(
   pj->feedback_data.decoupling_delay_time =
       fb_props->wind_decouple_time_factor *
       cosmology_get_time_since_big_bang(cosmo, cosmo->a);
+  pj->feedback_data.radius_stream = -1.f;
 
   /** Log the wind event.
    * z starid gasid dt M* vkick vkx vky vkz h x y z vx vy vz T rho v_sig tdec Ndec Z
@@ -449,8 +456,22 @@ runner_iact_nonsym_feedback_apply(
     const integertime_t ti_current) {
 
   /* Ignore decoupled particles */
-  if (pj->feedback_data.decoupling_delay_time > 0.f) return;
+  if (pj->feedback_data.decoupling_delay_time > 0.f) {
+    const float rho_i = hydro_get_comoving_density(pj);
+    if (rho_i <= 0.f) return;
 
+    /* Get r. */
+    const float r = sqrtf(r2);
+
+    /* Compute the kernel function */
+    const float hi_inv = 1.0f / hi;
+    const float ui = r * hi_inv;
+    float wi;
+    kernel_eval(ui, &wi);
+    warning("Original kernel: ");
+    fprintf(stderr, "%f", wi);
+    return;
+  }
   /* Do chemical enrichment of gas, metals and dust from star */
   feedback_do_chemical_enrichment_of_gas_around_star(
     r2, dx, hi, hj, si, pj, xpj, cosmo, hydro_props,
@@ -508,17 +529,18 @@ runner_iact_nonsym_feedback_apply(
 __attribute__((always_inline)) INLINE static void
 runner_iact_nonsym_wind_hydro(
     const float r2, const float dx[3], const float hi, const float hj,
-    struct part *restrict pi, struct part *restrict pj, struct xpart *xpj,
+    struct part *pi, struct xpart *xpi, 
     const struct cosmology *cosmo, const struct hydro_props *hydro_props,
     const struct feedback_props *fb_props,
     const integertime_t ti_current) {
 
+
   /* Ignore COUPLED particles */
-  if (pi->feedback_data.decoupling_delay_time == 0.f) return;
+  if (pi->feedback_data.decoupling_delay_time <= 0.f) return;
 
   /* Wind particle density */
-  const float rho_j = hydro_get_comoving_density(pi);
-  if (rho_j <= 0.f) return;
+  const float rho_i = hydro_get_comoving_density(pi);
+  if (rho_i <= 0.f) return;
 
   /* Get r. */
   const float r = sqrtf(r2);
@@ -544,26 +566,49 @@ runner_iact_nonsym_wind_hydro(
  * @param dx Comoving vector separating both particles (pi - pj).                                                                                                              
  * @param hi Comoving smoothing-length of particle i.                                                                                                                          
  * @param hj Comoving smoothing-length of particle j.                                                                                                                          
- * @param pi First (wind/gas) particle (not updated).                                                                                                                          
- * @param pj Second (gas) particle.                                                                                                                                            
- * @param xpj Extra particle data                                                                                                                                              
+ * @param pi Wind particle (not updated).                                                                                                                          
+ * @param pj Gas particle. 
+ * @param xpi Extra particle data (wind)                                                                                                                                           
+ * @param xpj Extra particle data (gas)                                                                                                                                          
  * @param cosmo The cosmological model.                                                                                                                                        
  * @param fb_props Properties of the feedback scheme.                                                                                                                          
- * @param ti_current Current integer time used value for seeding random number generator                                                                                       
+ * @param ti_current Current integer time used value for seeding random number generator   
+ * 
+ * 
+ * @param phys_const Physical constants
+ * @param us Unit system
+ * @param cooling Cooling structure                                                                                     
  * */
 __attribute__((always_inline)) INLINE static void
 runner_iact_sym_wind_hydro(
     const float r2, const float dx[3], const float hi, const float hj,
-    struct part *restrict pi, struct part *restrict pj, struct xpart *xpj,
+    struct part *pi, struct xpart *xpi, struct part *pj, struct xpart *xpj,
     const struct cosmology *cosmo, const struct hydro_props *hydro_props,
     const struct feedback_props *fb_props,
-    const integertime_t ti_current) {
+    const integertime_t ti_current,
+    
+    const struct phys_const* phys_const,
+    const struct unit_system* us, const struct cooling_function_data* cooling) {
+
 
   /* Ignore COUPLED particles */
-  if (pi->feedback_data.decoupling_delay_time == 0.f) return;
+  fprintf(stderr, "ENTERING WIND LOOP");
+  if (pi->feedback_data.decoupling_delay_time <= 0.f) return;
+  
+  /* No wind-wind interaction */
+  if (pj->feedback_data.decoupling_delay_time >= 0.f) return;
+   
+  /* Mixed wind particle*/
+  struct part *pk = NULL;
+  struct xpart *xpk = NULL;
 
-  /* Wind particle density */
-  const float rho_j = hydro_get_comoving_density(pi);
+  //bzero(pk, sizeof(struct part));
+  memmove(pk, pi, sizeof(struct part));
+  memmove(xpk, xpi, sizeof(struct xpart));
+
+
+  /* Gas particle density */
+  const float rho_j = hydro_get_comoving_density(pj);
   if (rho_j <= 0.f) return;
 
   /* Get r. */
@@ -574,9 +619,97 @@ runner_iact_sym_wind_hydro(
   const float ui = r * hi_inv;
   float wi;
   kernel_eval(ui, &wi);
-  warning("Firehose test kernel: ");
-  fprintf(stderr, "%f", wi);
+  warning("FIREHOSE test kernel: ");
+  fprintf(stderr, "FIREHOSE %f\n", wi);
+
+  /* Constants */ 
+  const float gamma = 5/3.;
+  float dt =
+      hydro_compute_timestep(pi, xpi, hydro_props, cosmo); // or get_timestep(p->time_bin, e->time_base) from feedback.c
+
+  /* Stream properties */
+  const float T_threshold = 1e4 * us->UnitTemperature_in_cgs;
+  if (cooling_convert_u_to_temp(pi->u, xpi->cooling_data.e_frac, cooling, pi) < T_threshold){
+    pi->u = cooling_convert_temp_to_u(T_threshold, xpi->cooling_data.e_frac, cooling, pi);
+  }
+  float Thot = cooling_convert_u_to_temp(pj->u, xpj->cooling_data.e_frac, cooling, pj);
+  float Tstream = cooling_convert_u_to_temp(pi->u, xpi->cooling_data.e_frac, cooling, pi);
+
+  const float X_Hi = chemistry_get_metal_mass_fraction_for_cooling(pi)[chemistry_element_H];
+  const float X_Hj = chemistry_get_metal_mass_fraction_for_cooling(pj)[chemistry_element_H];
+  const float yhelium_i = (1. - X_Hi) / (4. * X_Hi);
+  const float yhelium_j = (1. - X_Hj) / (4. * X_Hj);
+  const float mu_i = (1. + yhelium_i) / (1. + xpi->cooling_data.e_frac + 4. * yhelium_i);
+  const float mu_j = (1. + yhelium_j) / (1. + xpj->cooling_data.e_frac + 4. * yhelium_j);
+  float chi = Thot/mu_j/Tstream*mu_i; //assuming collisional equilibrium
+  
+  float square_v = 0;
+  float prior_gas_v2 = 0;
+
+  for (int i=0; i<3; i++){
+    square_v += pi->v_full[i]*pi->v_full[i];
+    prior_gas_v2 += pj->v_full[i]*pj->v_full[i];
+  }
+
+  /* Backgound mach number*/                              //try with hydro_get_comoving_soundspeed(pi) instead?
+  const float alpha = 0.21 * (0.8*exp(-3* sqrt(square_v)/(sqrt(pj->u/rho_j*gamma/(gamma - 1)) +sqrt(pi->u/chi/rho_j*gamma/(gamma - 1))))+0.2) ;
+  const float Mb = sqrt(square_v)/(sqrt(pj->u/rho_j/gamma/(gamma - 1)));
+
+
+  /* Ghost particle for the mixing layer properties of interaction */
+  pk->rho = sqrt(pj->rho*pi->rho);    
+  pk->u = cooling_convert_temp_to_u(sqrt(Tstream*Thot), xpk->cooling_data.e_frac, cooling, pk);
+
+  const float Lambda_mix = sqrt(pk->u)
+    /cooling_time(phys_const, us, hydro_props, cosmo, cooling, pk, xpk);
+
+  /* Length scales for mixing layer */
+  if (pi->feedback_data.radius_stream < 0.f){
+    pi->feedback_data.radius_stream = 10*pow(chi, 3/2.) * alpha * Mb * sqrt(Tstream*Thot) / Lambda_mix;
+  }
+  float tcoolmix = phys_const->const_boltzmann_k* sqrt(Tstream*Thot) / ((gamma -1 )* Lambda_mix);
+  float tsc = 2 * pi->feedback_data.radius_stream / sqrt(pi->u/chi/rho_j*gamma/(gamma - 1));
+  float tshear = pi->feedback_data.radius_stream/ sqrt(square_v);
+
+  /* Does the stream satisfy the survival criterion? */
+  float virtual_mass = chi*rho_j*pow(pi->feedback_data.radius_stream,2)*M_PI;
+
+  if (tcoolmix/tshear < 1){
+    virtual_mass *= wi*exp(-ti_current/tshear);
+    return; 
+  }
+
+  /* Update particle internal energy */
+  float mdot = 4/chi * virtual_mass/tsc * pow(tcoolmix/tsc, -0.25);
+
+
+  for (int i=0; i<3; i++){
+    pi->v_full[i] *= wi*virtual_mass/(virtual_mass + mdot*dt);
+  }
+
+  pi->u = wi*mdot*(pi->u - pj->u);
+  pj->u = wi*mdot*(pj->u - pi->u);
+  
+  /* Energy loss into thermal energy of stream */
+  float post_gas_v2 = 0;
+  float post_square_v = 0;
+  for (int i=0; i<3; i++){
+    post_square_v += pi->v_full[i]*pi->v_full[i];
+    post_gas_v2 += pj->v_full[i]*pj->v_full[i];
+  }
+  
+  float delE = 0.5*((virtual_mass+mdot*dt)*post_square_v - virtual_mass*square_v + pj->mass*(post_gas_v2 - prior_gas_v2));
+  pi->u += delE;
+
+  /* Update virtual mass of stream */
+  virtual_mass += wi*mdot*dt;
+  pi->feedback_data.radius_stream = sqrt(virtual_mass/M_PI/chi/rho_j);
 
   return;
-
+  
 }
+
+/*
+Need to add:
+- output total kernel sum for each neighbour loop to check it is close to unity
+*/

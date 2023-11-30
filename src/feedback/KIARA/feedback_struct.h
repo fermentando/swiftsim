@@ -35,6 +35,9 @@ struct feedback_part_data {
   /*! The time to shut off cooling for this particle */
   float cooling_shutoff_delay_time;
 
+  /*! Radius of outflowing stream */
+  float radius_stream;
+
 #if COOLING_GRACKLE_MODE >= 2
   /*! Number of SNe (of any type) going off in nearby stars */
   float SNe_ThisTimeStep;
