@@ -282,6 +282,7 @@ feedback_kick_gas_around_star(
       fb_props->wind_decouple_time_factor *
       cosmology_get_time_since_big_bang(cosmo, cosmo->a);
   pj->feedback_data.radius_stream = -1.f;
+  pj->feedback_data.time_from_decoupled = -1.f;
 
   /** Log the wind event.
    * z starid gasid dt M* vkick vkx vky vkz h x y z vx vy vz T rho v_sig tdec Ndec Z
@@ -664,8 +665,9 @@ runner_iact_sym_wind_hydro(
     /cooling_time(phys_const, us, hydro_props, cosmo, cooling, pk, xpk);
 
   /* Length scales for mixing layer */
-  if (pi->feedback_data.radius_stream < 0.f){
+  if (pi->feedback_data.time_from_decoupled < 0.f){
     pi->feedback_data.radius_stream = 10*pow(chi, 3/2.) * alpha * Mb * sqrt(Tstream*Thot) / Lambda_mix;
+    pi->feedback_data.time_from_decoupled = 0.f;
   }
   float tcoolmix = phys_const->const_boltzmann_k* sqrt(Tstream*Thot) / ((gamma -1 )* Lambda_mix);
   float tsc = 2 * pi->feedback_data.radius_stream / sqrt(pi->u/chi/rho_j*gamma/(gamma - 1));
@@ -675,7 +677,7 @@ runner_iact_sym_wind_hydro(
   float virtual_mass = chi*rho_j*pow(pi->feedback_data.radius_stream,2)*M_PI;
 
   if (tcoolmix/tshear < 1){
-    virtual_mass *= wi*exp(-ti_current/tshear);
+    virtual_mass *= wi*exp(-pi->feedback_data.time_from_decoupled/tshear);
     return; 
   }
 
