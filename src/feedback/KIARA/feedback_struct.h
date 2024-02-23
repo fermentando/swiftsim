@@ -39,7 +39,7 @@ struct feedback_part_data {
   float radius_stream;
 
   /*! Time from decoupling */
-  float time_from_decoupled
+  float destruction_time;
 
 #if COOLING_GRACKLE_MODE >= 2
   /*! Number of SNe (of any type) going off in nearby stars */

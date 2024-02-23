@@ -282,7 +282,7 @@ feedback_kick_gas_around_star(
       fb_props->wind_decouple_time_factor *
       cosmology_get_time_since_big_bang(cosmo, cosmo->a);
   pj->feedback_data.radius_stream = -1.f;
-  pj->feedback_data.time_from_decoupled = -1.f;
+  pj->feedback_data.destruction_time= 0.f;
 
   /** Log the wind event.
    * z starid gasid dt M* vkick vkx vky vkz h x y z vx vy vz T rho v_sig tdec Ndec Z
@@ -469,8 +469,6 @@ runner_iact_nonsym_feedback_apply(
     const float ui = r * hi_inv;
     float wi;
     kernel_eval(ui, &wi);
-    warning("Original kernel: ");
-    fprintf(stderr, "%f", wi);
     return;
   }
   /* Do chemical enrichment of gas, metals and dust from star */
@@ -589,16 +587,19 @@ runner_iact_sym_wind_hydro(
     const integertime_t ti_current,
     
     const struct phys_const* phys_const,
-    const struct unit_system* us, const struct cooling_function_data* cooling) {
+    const struct unit_system* us, const struct cooling_function_data* cooling, 
+    FILE *fp) {
 
 
   /* Ignore COUPLED particles */
-  fprintf(stderr, "ENTERING WIND LOOP");
   if (pi->feedback_data.decoupling_delay_time <= 0.f) return;
   
   /* No wind-wind interaction */
   if (pj->feedback_data.decoupling_delay_time >= 0.f) return;
-   
+
+  message("FIREHOSE MODEL ACTIVATED");
+  //error("Reached first wind particle");
+  
   /* Mixed wind particle*/
   struct part *pk = NULL;
   struct xpart *xpk = NULL;
@@ -610,7 +611,6 @@ runner_iact_sym_wind_hydro(
 
   /* Gas particle density */
   const float rho_j = hydro_get_comoving_density(pj);
-  if (rho_j <= 0.f) return;
 
   /* Get r. */
   const float r = sqrtf(r2);
@@ -620,8 +620,7 @@ runner_iact_sym_wind_hydro(
   const float ui = r * hi_inv;
   float wi;
   kernel_eval(ui, &wi);
-  warning("FIREHOSE test kernel: ");
-  fprintf(stderr, "FIREHOSE %f\n", wi);
+  warning("FIREHOSE test kernel: %f\n", wi);
 
   /* Constants */ 
   const float gamma = 5/3.;
@@ -652,9 +651,15 @@ runner_iact_sym_wind_hydro(
     prior_gas_v2 += pj->v_full[i]*pj->v_full[i];
   }
 
-  /* Backgound mach number*/                              //try with hydro_get_comoving_soundspeed(pi) instead?
-  const float alpha = 0.21 * (0.8*exp(-3* sqrt(square_v)/(sqrt(pj->u/rho_j*gamma/(gamma - 1)) +sqrt(pi->u/chi/rho_j*gamma/(gamma - 1))))+0.2) ;
-  const float Mb = sqrt(square_v)/(sqrt(pj->u/rho_j/gamma/(gamma - 1)));
+  /* Estimate radius of outflow*/          
+
+  const double v_circ_sys_units =
+      pow(pi->gpart->fof_data.group_stellar_mass / 102.329, 0.26178) *
+      pow(cosmo->H / cosmo->H0, 1. / 3.) *
+      1e5*us->UnitLength_in_cgs/us->UnitTime_in_cgs;
+    
+  if (pi->gpart->fof_data.group_stellar_mass==0.f) warning("Wind particle is not linked to any galaxy");
+    
 
 
   /* Ghost particle for the mixing layer properties of interaction */
@@ -665,9 +670,14 @@ runner_iact_sym_wind_hydro(
     /cooling_time(phys_const, us, hydro_props, cosmo, cooling, pk, xpk);
 
   /* Length scales for mixing layer */
-  if (pi->feedback_data.time_from_decoupled < 0.f){
-    pi->feedback_data.radius_stream = 10*pow(chi, 3/2.) * alpha * Mb * sqrt(Tstream*Thot) / Lambda_mix;
-    pi->feedback_data.time_from_decoupled = 0.f;
+  if (pi->feedback_data.destruction_time <= 0.f){
+
+    pi->feedback_data.radius_stream = 
+      sqrt(3 * pi->u/chi/rho_j/(gamma - 1)) / pow(v_circ_sys_units, 3.) *
+      phys_const->const_newton_G*pi->gpart->fof_data.group_mass *
+      pow(0.5, 3); //radius to disk height ratio
+
+    pi->feedback_data.destruction_time = 0.f;
   }
   float tcoolmix = phys_const->const_boltzmann_k* sqrt(Tstream*Thot) / ((gamma -1 )* Lambda_mix);
   float tsc = 2 * pi->feedback_data.radius_stream / sqrt(pi->u/chi/rho_j*gamma/(gamma - 1));
@@ -675,22 +685,39 @@ runner_iact_sym_wind_hydro(
 
   /* Does the stream satisfy the survival criterion? */
   float virtual_mass = chi*rho_j*pow(pi->feedback_data.radius_stream,2)*M_PI;
+  float mdot;
 
-  if (tcoolmix/tshear < 1){
-    virtual_mass *= wi*exp(-pi->feedback_data.time_from_decoupled/tshear);
-    return; 
+  if (tcoolmix/tshear > 1.f){
+    pi->feedback_data.destruction_time += dt;
+    virtual_mass *= wi*exp(-pi->feedback_data.destruction_time/tshear);
+    mdot = -1/tshear*virtual_mass*exp(-pi->feedback_data.destruction_time/tshear);
+      
+    /* Solving chemistry */
+    for (int elem = 0; elem < chemistry_element_count; ++elem) { 
+      pi->chemistry_data.metal_mass_fraction[elem] *= 1 + wi * mdot * dt / virtual_mass;
+      pj->chemistry_data.metal_mass_fraction[elem] -= wi* mdot * dt /pj->mass * pi->chemistry_data.metal_mass_fraction[elem];
+    }
+  }
+
+  else {
+    pi->feedback_data.destruction_time = 0.f;
+    mdot = 4/chi * virtual_mass/tsc * pow(tcoolmix/tsc, -0.25);
+    
+    /* Solving chemistry*/
+    for (int elem = 0; elem < chemistry_element_count; ++elem) {
+      pi->chemistry_data.metal_mass_fraction[elem] += wi* mdot * dt /virtual_mass * pj->chemistry_data.metal_mass_fraction[elem];
+      pj->chemistry_data.metal_mass_fraction[elem] *= 1 - wi * mdot * dt / pj->mass;
+    }  
   }
 
   /* Update particle internal energy */
-  float mdot = 4/chi * virtual_mass/tsc * pow(tcoolmix/tsc, -0.25);
-
-
   for (int i=0; i<3; i++){
     pi->v_full[i] *= wi*virtual_mass/(virtual_mass + mdot*dt);
   }
 
   pi->u = wi*mdot*(pi->u - pj->u);
   pj->u = wi*mdot*(pj->u - pi->u);
+
   
   /* Energy loss into thermal energy of stream */
   float post_gas_v2 = 0;
@@ -701,17 +728,43 @@ runner_iact_sym_wind_hydro(
   }
   
   float delE = 0.5*((virtual_mass+mdot*dt)*post_square_v - virtual_mass*square_v + pj->mass*(post_gas_v2 - prior_gas_v2));
-  pi->u += delE;
+  pi->u += wi*delE;
 
   /* Update virtual mass of stream */
   virtual_mass += wi*mdot*dt;
   pi->feedback_data.radius_stream = sqrt(virtual_mass/M_PI/chi/rho_j);
 
+  /* Recouple if Mach < 1 */
+  if (sqrt(post_square_v)/(sqrt(pj->u/rho_j/gamma/(gamma - 1))))pi->feedback_data.decoupling_delay_time = 0.f;
+
+  /* Print wind properties*/
+  const float length_convert = cosmo->a * fb_props->length_to_kpc;
+  const float velocity_convert = cosmo->a_inv / fb_props->kms_to_internal;
+  const float rho_convert = cosmo->a3_inv * fb_props->rho_to_n_cgs;
+  const float u_convert =
+      cosmo->a_factor_internal_energy / fb_props->temp_to_u_factor;
+  message("WINDPROPS %.3f %lld %lld %g %g %g %g %g %g %g %g %g %g %g %g %d %g %g\n",
+        cosmo->z,
+        pi->id,
+        pj->id,
+        pi->gpart->fof_data.group_mass * fb_props->mass_to_solar_mass, 
+        pi->h * cosmo->a * fb_props->length_to_kpc,
+        pi->x[0] * length_convert,
+        pi->x[1] * length_convert,
+        pi->x[2] * length_convert,
+        pi->v_full[0] * velocity_convert,
+        pi->v_full[1] * velocity_convert,
+        pi->v_full[2] * velocity_convert,
+        pi->u * u_convert,
+        pi->rho * rho_convert,
+        pi->viscosity.v_sig * velocity_convert,
+        pi->feedback_data.decoupling_delay_time * fb_props->time_to_Myr,
+        pi->feedback_data.number_of_times_decoupled,
+        pi->chemistry_data.metal_mass_fraction_total,
+    pi->feedback_data.radius_stream * length_convert);
+
+
   return;
   
 }
 
-/*
-Need to add:
-- output total kernel sum for each neighbour loop to check it is close to unity
-*/
