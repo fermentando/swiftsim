@@ -365,7 +365,7 @@ void runner_do_star_formation(struct runner *r, struct cell *c, int timer) {
       if (part_is_active(p, e)) {
 
         /* Recouple before star formation, and after cooling */
-        feedback_recouple_part(p, xp, e, with_cosmology);
+        feedback_recouple_part(p, xp, e, with_cosmology, cosmo, us, feedback_props);
 
         /* Is this particle star forming? */
         if (star_formation_is_star_forming(p, xp, sf_props, phys_const, cosmo,
@@ -773,7 +773,8 @@ void runner_do_end_hydro_force(struct runner *r, struct cell *c, int timer) {
 
           /* Some values need to be reset in the Gizmo case. */
           hydro_prepare_force(p, &c->hydro.xparts[k], cosmo,
-                              e->hydro_properties, 0, 0);
+                              e->hydro_properties, e->pressure_floor_props,
+                              /*dt_alpha=*/0, /*dt_therm=*/0);
           rt_prepare_force(p);
 #endif
         }
@@ -1058,7 +1059,7 @@ void runner_do_csds(struct runner *r, struct cell *c, int timer) {
  * @param c cell
  * @param timer 1 if the time is to be recorded.
  */
-void runner_do_fof_self(struct runner *r, struct cell *c, int timer) {
+void runner_do_fof_search_self(struct runner *r, struct cell *c, int timer) {
 
 #ifdef WITH_FOF
 
@@ -1070,10 +1071,8 @@ void runner_do_fof_self(struct runner *r, struct cell *c, int timer) {
   const int periodic = s->periodic;
   const struct gpart *const gparts = s->gparts;
   const double search_r2 = e->fof_properties->l_x2;
-  const struct cosmology *cosmo = e->cosmology;
 
-  rec_fof_search_self(e->fof_properties, dim, search_r2, periodic, gparts, c,
-                      cosmo);
+  rec_fof_search_self(e->fof_properties, dim, search_r2, periodic, gparts, c);
 
   if (timer) TIMER_TOC(timer_fof_self);
 
@@ -1090,8 +1089,8 @@ void runner_do_fof_self(struct runner *r, struct cell *c, int timer) {
  * @param cj cell j
  * @param timer 1 if the time is to be recorded.
  */
-void runner_do_fof_pair(struct runner *r, struct cell *ci, struct cell *cj,
-                        int timer) {
+void runner_do_fof_search_pair(struct runner *r, struct cell *ci,
+                               struct cell *cj, int timer) {
 
 #ifdef WITH_FOF
 
@@ -1107,10 +1106,71 @@ void runner_do_fof_pair(struct runner *r, struct cell *ci, struct cell *cj,
   const int periodic = s->periodic;
   const struct gpart *const gparts = s->gparts;
   const double search_r2 = e->fof_properties->l_x2;
-  const struct cosmology *cosmo = e->cosmology;
 
   rec_fof_search_pair(e->fof_properties, dim, search_r2, periodic, gparts, ci,
-                      cj, cosmo);
+                      cj);
+
+  if (timer) TIMER_TOC(timer_fof_pair);
+#else
+  error("SWIFT was not compiled with FOF enabled!");
+#endif
+}
+
+/**
+ * @brief Recursively search for FOF groups in a single cell.
+ *
+ * @param r runner task
+ * @param c cell
+ * @param timer 1 if the time is to be recorded.
+ */
+void runner_do_fof_attach_self(struct runner *r, struct cell *c, int timer) {
+
+#ifdef WITH_FOF
+
+  TIMER_TIC;
+
+  const struct engine *e = r->e;
+  struct space *s = e->s;
+  const double dim[3] = {s->dim[0], s->dim[1], s->dim[2]};
+  const int periodic = s->periodic;
+  const struct gpart *const gparts = s->gparts;
+  const double attach_r2 = e->fof_properties->l_x2;
+
+  rec_fof_attach_self(e->fof_properties, dim, attach_r2, periodic, gparts,
+                      s->nr_gparts, c);
+
+  if (timer) TIMER_TOC(timer_fof_self);
+
+#else
+  error("SWIFT was not compiled with FOF enabled!");
+#endif
+}
+
+/**
+ * @brief Recursively search for FOF groups between a pair of cells.
+ *
+ * @param r runner task
+ * @param ci cell i
+ * @param cj cell j
+ * @param timer 1 if the time is to be recorded.
+ */
+void runner_do_fof_attach_pair(struct runner *r, struct cell *ci,
+                               struct cell *cj, int timer) {
+
+#ifdef WITH_FOF
+
+  TIMER_TIC;
+
+  const struct engine *e = r->e;
+  struct space *s = e->s;
+  const double dim[3] = {s->dim[0], s->dim[1], s->dim[2]};
+  const int periodic = s->periodic;
+  const struct gpart *const gparts = s->gparts;
+  const double attach_r2 = e->fof_properties->l_x2;
+
+  rec_fof_attach_pair(e->fof_properties, dim, attach_r2, periodic, gparts,
+                      s->nr_gparts, ci, cj, e->nodeID == ci->nodeID,
+                      e->nodeID == cj->nodeID);
 
   if (timer) TIMER_TOC(timer_fof_pair);
 #else
