@@ -47,6 +47,7 @@
 #include "engine.h"
 #include "error.h"
 #include "feedback.h"
+#include "feedback_iact.h"
 #include "fof.h"
 #include "forcing.h"
 #include "gravity.h"
@@ -182,6 +183,11 @@ void runner_do_cooling(struct runner *r, struct cell *c, int timer) {
         cooling_cool_part(constants, us, cosmo, hydro_props,
                           entropy_floor_props, pressure_floor, cooling_func, p,
                           xp, dt_cool, dt_therm, time);
+        
+        /* Print wind properties */
+        if (p->feedback_data.decoupling_delay_time >= 0.f){
+          logger_windprops_printprops(p, cosmo, e->feedback_props, e->windprops_logger);
+        }
       }
     }
   }

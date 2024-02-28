@@ -132,6 +132,7 @@ void DOPAIR1_NAIVE(struct runner *r, struct cell *restrict ci,
         runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &ci->hydro.xparts[pid], pj, &cj->hydro.xparts[pjd],
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
                 e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);
+        logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
         runner_iact_nonsym_timebin(r2, dx, hi, hj, pi, pj, a, H);
@@ -157,6 +158,7 @@ void DOPAIR1_NAIVE(struct runner *r, struct cell *restrict ci,
         runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &ci->hydro.xparts[pid], pj, &cj->hydro.xparts[pjd],
                 cosmo, e->hydro_properties, e->feedback_props, shell_current,
                 e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);
+        logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
         runner_iact_nonsym_timebin(r2, dx, hj, hi, pj, pi, a, H);
@@ -275,6 +277,7 @@ void DOPAIR2_NAIVE(struct runner *r, struct cell *restrict ci,
           runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &ci->hydro.xparts[pid], pj, &cj->hydro.xparts[pjd], 
                 cosmo, e->hydro_properties, e->feedback_props, shell_current,
                 e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);
+          logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
           runner_iact_timebin(r2, dx, hi, hj, pi, pj, a, H);
@@ -295,6 +298,7 @@ void DOPAIR2_NAIVE(struct runner *r, struct cell *restrict ci,
           runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &ci->hydro.xparts[pid],  pj, &cj->hydro.xparts[pjd],
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
                 e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);
+          logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
           runner_iact_nonsym_timebin(r2, dx, hi, hj, pi, pj, a, H);
@@ -319,6 +323,7 @@ void DOPAIR2_NAIVE(struct runner *r, struct cell *restrict ci,
           runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &ci->hydro.xparts[pid], pj, &cj->hydro.xparts[pjd],
                 cosmo, e->hydro_properties, e->feedback_props, shell_current,
                 e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);
+          logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
           runner_iact_nonsym_timebin(r2, dx, hj, hi, pj, pi, a, H);
@@ -427,6 +432,7 @@ void DOSELF1_NAIVE(struct runner *r, struct cell *restrict c) {
         runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &c->hydro.xparts[pid], pj, &c->hydro.xparts[pjd], 
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
                 e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);
+        logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
         runner_iact_timebin(r2, dx, hi, hj, pi, pj, a, H);
@@ -447,6 +453,7 @@ void DOSELF1_NAIVE(struct runner *r, struct cell *restrict c) {
         runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &c->hydro.xparts[pid],  pj, &c->hydro.xparts[pjd],
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
                 e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);
+        logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
         runner_iact_nonsym_timebin(r2, dx, hi, hj, pi, pj, a, H);
@@ -471,6 +478,7 @@ void DOSELF1_NAIVE(struct runner *r, struct cell *restrict c) {
         runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &c->hydro.xparts[pid], pj, &c->hydro.xparts[pjd],
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
                 e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);
+        logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
         runner_iact_nonsym_timebin(r2, dx, hj, hi, pj, pi, a, H);
@@ -577,6 +585,7 @@ void DOSELF2_NAIVE(struct runner *r, struct cell *restrict c) {
         runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &c->hydro.xparts[pid], pj, &c->hydro.xparts[pjd], 
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
                 e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);
+        logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
         runner_iact_timebin(r2, dx, hi, hj, pi, pj, a, H);
@@ -596,7 +605,8 @@ void DOSELF2_NAIVE(struct runner *r, struct cell *restrict c) {
                                 e->sink_properties);
         runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &c->hydro.xparts[pid], pj, &c->hydro.xparts[pjd],
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
-                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);                                
+                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);        
+        logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);                        
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
         runner_iact_nonsym_timebin(r2, dx, hi, hj, pi, pj, a, H);
@@ -620,7 +630,8 @@ void DOSELF2_NAIVE(struct runner *r, struct cell *restrict c) {
                                 e->sink_properties);
         runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &c->hydro.xparts[pid], pj, &c->hydro.xparts[pjd],
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
-                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);                                
+                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);       
+        logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);                         
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
         runner_iact_nonsym_timebin(r2, dx, hj, hi, pj, pi, a, H);
@@ -729,7 +740,8 @@ void DOPAIR_SUBSET_NAIVE(struct runner *r, struct cell *restrict ci,
                                 e->sink_properties);
         runner_iact_sym_wind_hydro(r2, dx, hi, pj->h, pi, &ci->hydro.xparts[ind[pid]],  pj, &cj->hydro.xparts[pjd],
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
-                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);                              
+                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);       
+        logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);                       
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
         runner_iact_nonsym_timebin(r2, dx, hi, pj->h, pi, pj, a, H);
@@ -844,7 +856,8 @@ void DOPAIR_SUBSET(struct runner *r, struct cell *restrict ci,
                                   e->sink_properties);
         runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &ci->hydro.xparts[ind[pid]],  pj, &cj->hydro.xparts[ind[pjd]],
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
-                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);                                 
+                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);
+        logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);                                 
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
           runner_iact_nonsym_timebin(r2, dx, hi, hj, pi, pj, a, H);
@@ -915,7 +928,8 @@ void DOPAIR_SUBSET(struct runner *r, struct cell *restrict ci,
                                   e->sink_properties);
           runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &ci->hydro.xparts[ind[pid]], pj, &cj->hydro.xparts[ind[pjd]],
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
-                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);   
+                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);  
+          logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger); 
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
           runner_iact_nonsym_timebin(r2, dx, hi, hj, pi, pj, a, H);
@@ -1090,6 +1104,7 @@ void DOSELF_SUBSET(struct runner *r, struct cell *restrict ci,
         runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &ci->hydro.xparts[ind[pid]],  pj, &ci->hydro.xparts[pjd],
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
                 e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);   
+        logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
         runner_iact_nonsym_timebin(r2, dx, hi, hj, pi, pj, a, H);
@@ -1277,6 +1292,7 @@ void DOPAIR1(struct runner *r, struct cell *ci, struct cell *cj, const int sid,
           runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &ci->hydro.xparts[sort_i[pid].i],  pj, &cj->hydro.xparts[sort_j[pjd].i],
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
                 e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);   
+          logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
           runner_iact_nonsym_timebin(r2, dx, hi, hj, pi, pj, a, H);
@@ -1381,6 +1397,7 @@ void DOPAIR1(struct runner *r, struct cell *ci, struct cell *cj, const int sid,
           runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &ci->hydro.xparts[sort_i[pid].i], pj, &cj->hydro.xparts[sort_j[pjd].i],
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
                 e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);   
+          logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
           runner_iact_nonsym_timebin(r2, dx, hj, hi, pj, pi, a, H);
@@ -1709,6 +1726,7 @@ void DOPAIR2(struct runner *r, struct cell *ci, struct cell *cj, const int sid,
           runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &ci->hydro.xparts[sort_i[pid].i], pj, &cj->hydro.xparts[sort_j[pjd].i], 
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
                 e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);   
+          logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
           runner_iact_nonsym_timebin(r2, dx, hj, hi, pj, pi, a, H);
@@ -1793,7 +1811,8 @@ void DOPAIR2(struct runner *r, struct cell *ci, struct cell *cj, const int sid,
             runner_iact_star_formation(r2, dx, hi, hj, pi, pj, a, H);
             runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &ci->hydro.xparts[sort_i[pid].i], pj, &cj->hydro.xparts[sort_j[pjd].i], 
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
-                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);   
+                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);  
+            logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger); 
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
             runner_iact_timebin(r2, dx, hi, hj, pi, pj, a, H);
@@ -1812,7 +1831,8 @@ void DOPAIR2(struct runner *r, struct cell *ci, struct cell *cj, const int sid,
                                     e->sink_properties);
             runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &ci->hydro.xparts[sort_i[pid].i], pj, &cj->hydro.xparts[sort_j[pjd].i],
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
-                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);   
+                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger); 
+            logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);  
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
             runner_iact_nonsym_timebin(r2, dx, hi, hj, pi, pj, a, H);
@@ -1934,6 +1954,7 @@ void DOPAIR2(struct runner *r, struct cell *ci, struct cell *cj, const int sid,
           runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &ci->hydro.xparts[sort_i[pid].i], pj, &cj->hydro.xparts[sort_j[pjd].i],
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
                 e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);   
+          logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
           runner_iact_nonsym_timebin(r2, dx, hi, hj, pi, pj, a, H);
@@ -2020,7 +2041,8 @@ void DOPAIR2(struct runner *r, struct cell *ci, struct cell *cj, const int sid,
             runner_iact_star_formation(r2, dx, hj, hi, pj, pi, a, H);
             runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &ci->hydro.xparts[sort_i[pid].i], pj, &cj->hydro.xparts[sort_j[pjd].i], 
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
-                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);   
+                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);  
+            logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger); 
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
             runner_iact_timebin(r2, dx, hj, hi, pj, pi, a, H);
@@ -2039,7 +2061,8 @@ void DOPAIR2(struct runner *r, struct cell *ci, struct cell *cj, const int sid,
                                     e->sink_properties);
             runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &ci->hydro.xparts[sort_i[pid].i], pj, &cj->hydro.xparts[sort_j[pjd].i],
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
-                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);   
+                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);
+            logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);   
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
             runner_iact_nonsym_timebin(r2, dx, hj, hi, pj, pi, a, H);
@@ -2253,6 +2276,7 @@ void DOSELF1(struct runner *r, struct cell *restrict c) {
           runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &c->hydro.xparts[pid], pj, &c->hydro.xparts[pjd],
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
                 e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger); 
+          logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
           runner_iact_nonsym_timebin(r2, dx, hj, hi, pj, pi, a, H);
@@ -2317,6 +2341,7 @@ void DOSELF1(struct runner *r, struct cell *restrict c) {
             runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &c->hydro.xparts[pid], pj, &c->hydro.xparts[pjd], 
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
                 e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger); 
+            logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
             runner_iact_timebin(r2, dx, hi, hj, pi, pj, a, H);
@@ -2337,6 +2362,7 @@ void DOSELF1(struct runner *r, struct cell *restrict c) {
             runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &c->hydro.xparts[pid], pj, &c->hydro.xparts[pjd], 
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
                 e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger); 
+            logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
             runner_iact_nonsym_timebin(r2, dx, hi, hj, pi, pj, a, H);
@@ -2361,6 +2387,7 @@ void DOSELF1(struct runner *r, struct cell *restrict c) {
             runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &c->hydro.xparts[pid], pj, &c->hydro.xparts[pjd],
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
                 e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger); 
+            logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
             runner_iact_nonsym_timebin(r2, dx, hj, hi, pj, pi, a, H);
@@ -2582,6 +2609,7 @@ void DOSELF2(struct runner *r, struct cell *restrict c) {
             runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &c->hydro.xparts[pid],  pj, &c->hydro.xparts[pjd],
                 cosmo,e->hydro_properties,e->feedback_props,shell_current,
                 e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger); 
+            logger_windprops_printprops(pi, cosmo, e->feedback_props, e->windprops_logger);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
             runner_iact_nonsym_timebin(r2, dx, hi, hj, pi, pj, a, H);

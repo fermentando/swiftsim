@@ -768,3 +768,41 @@ runner_iact_sym_wind_hydro(
   
 }
 
+__attribute__((always_inline)) INLINE static void
+logger_windprops_printprops(
+    struct part *pi,
+    const struct cosmology *cosmo, const struct feedback_props *fb_props,
+    FILE *fp) {
+
+  /* Ignore COUPLED particles */
+  if (pi->feedback_data.decoupling_delay_time <= 0.f) return;
+  
+
+  /* Print wind properties*/
+  const float length_convert = cosmo->a * fb_props->length_to_kpc;
+  const float velocity_convert = cosmo->a_inv / fb_props->kms_to_internal;
+  const float rho_convert = cosmo->a3_inv * fb_props->rho_to_n_cgs;
+  const float u_convert =
+      cosmo->a_factor_internal_energy / fb_props->temp_to_u_factor;
+  fprintf(fp, "%.3f %lld %g %g %g %g %g %g %g %g %g %g %g %g %d %g %g\n",
+        cosmo->z,
+        pi->id,
+        pi->gpart->fof_data.group_mass * fb_props->mass_to_solar_mass, 
+        pi->h * cosmo->a * fb_props->length_to_kpc,
+        pi->x[0] * length_convert,
+        pi->x[1] * length_convert,
+        pi->x[2] * length_convert,
+        pi->v_full[0] * velocity_convert,
+        pi->v_full[1] * velocity_convert,
+        pi->v_full[2] * velocity_convert,
+        pi->u * u_convert,
+        pi->rho * rho_convert,
+        pi->viscosity.v_sig * velocity_convert,
+        pi->feedback_data.decoupling_delay_time * fb_props->time_to_Myr,
+        pi->feedback_data.number_of_times_decoupled,
+        pi->chemistry_data.metal_mass_fraction_total,
+    pi->feedback_data.radius_stream * length_convert);
+
+
+  return;
+}

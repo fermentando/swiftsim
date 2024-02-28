@@ -3713,15 +3713,12 @@ void engine_clean(struct engine *e, const int fof, const int restart) {
       fclose(e->sfh_logger);
     }
 
-<<<<<<< HEAD
     if (e->policy & engine_policy_feedback){
       fclose(e->windprops_logger);
     }
-=======
 #ifndef RT_NONE
     fclose(e->file_rt_subcycles);
 #endif
->>>>>>> 5748dc8aca17592a82bf27d752bb4955c8d8b8e2
   }
 
   /* If the run was restarted, we should also free the memory allocated
