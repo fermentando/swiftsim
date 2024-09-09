@@ -38,6 +38,9 @@ struct feedback_part_data {
   /*! Radius of outflowing stream */
   float radius_stream;
 
+  /*! Initial mass of the stream */
+  float initial_mass;
+
   /*! Time from decoupling */
   float destruction_time;
 

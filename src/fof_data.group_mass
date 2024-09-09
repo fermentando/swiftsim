@@ -1,0 +1,9 @@
+./runner_doiact_functions_stars.h:
+  654 :           if (gi->type == swift_type_dark_matter) {
+  656 :             const float gix = gi->x[0] - (cj->loc[0] + shift[0]);
+  657 :             const float giy = gi->x[1] - (cj->loc[1] + shift[1]);
+  658 :             const float giz = gi->x[2] - (cj->loc[2] + shift[2]);
+  673 :           if (gi->type == swift_type_dark_matter) {
+  675 :             const float gix = gi->x[0] - (cj->loc[0] + shift[0]);
+  676 :             const float giy = gi->x[1] - (cj->loc[1] + shift[1]);
+  677 :             const float giz = gi->x[2] - (cj->loc[2] + shift[2]);

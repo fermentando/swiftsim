@@ -628,7 +628,7 @@ runner_iact_sym_wind_hydro(
       hydro_compute_timestep(pi, xpi, hydro_props, cosmo); // or get_timestep(p->time_bin, e->time_base) from feedback.c
 
   /* Stream properties */
-  const float T_threshold = 1e4 * us->UnitTemperature_in_cgs;
+  const float T_threshold = 1e4 / us->UnitTemperature_in_cgs;
   if (cooling_convert_u_to_temp(pi->u, xpi->cooling_data.e_frac, cooling, pi) < T_threshold){
     pi->u = cooling_convert_temp_to_u(T_threshold, xpi->cooling_data.e_frac, cooling, pi);
   }
@@ -650,6 +650,9 @@ runner_iact_sym_wind_hydro(
     square_v += pi->v_full[i]*pi->v_full[i];
     prior_gas_v2 += pj->v_full[i]*pj->v_full[i];
   }
+
+  float Mach = sqrt(square_v-prior_gas_v2)/(sqrt(pj->u/rho_j/gamma/(gamma - 1)));
+  
 
   /* Estimate radius of outflow*/          
 
@@ -682,15 +685,19 @@ runner_iact_sym_wind_hydro(
   float tcoolmix = phys_const->const_boltzmann_k* sqrt(Tstream*Thot) / ((gamma -1 )* Lambda_mix);
   float tsc = 2 * pi->feedback_data.radius_stream / sqrt(pi->u/chi/rho_j*gamma/(gamma - 1));
   float tshear = pi->feedback_data.radius_stream/ sqrt(square_v);
-
-  /* Does the stream satisfy the survival criterion? */
   float virtual_mass = chi*rho_j*pow(pi->feedback_data.radius_stream,2)*M_PI;
   float mdot;
 
+  /* Does the stream satisfy the survival criterion? */
   if (tcoolmix/tshear > 1.f){
+
+    /* If cloud just began to be destroyed, update initial mass */
+    if (pi->feedback_data.destruction_time == 0.f || Mach < 1){
+      pi->feedback_data.initial_mass = virtual_mass;
+    }
+
     pi->feedback_data.destruction_time += dt;
-    virtual_mass *= wi*exp(-pi->feedback_data.destruction_time/tshear);
-    mdot = -1/tshear*virtual_mass*exp(-pi->feedback_data.destruction_time/tshear);
+    mdot = -1/tshear*pi->feedback_data.initial_mass*exp(-pi->feedback_data.destruction_time/tshear);
       
     /* Solving chemistry */
     for (int elem = 0; elem < chemistry_element_count; ++elem) { 
@@ -699,9 +706,15 @@ runner_iact_sym_wind_hydro(
     }
   }
 
-  else {
+  if (tcoolmix/tshear < 1.f) {
+
+    /* If cloud just began to grow, update initial mass */
+    if (pi->feedback_data.destruction_time > 0.f || Mach < 1){
+      pi->feedback_data.initial_mass = virtual_mass;
+    }
+
     pi->feedback_data.destruction_time = 0.f;
-    mdot = 4/chi * virtual_mass/tsc * pow(tcoolmix/tsc, -0.25);
+    mdot = 4/chi * pi->feedback_data.initial_mass/tsc * pow(tcoolmix/tsc, -0.25);
     
     /* Solving chemistry*/
     for (int elem = 0; elem < chemistry_element_count; ++elem) {
@@ -718,6 +731,7 @@ runner_iact_sym_wind_hydro(
   pi->u = wi*mdot*(pi->u - pj->u);
   pj->u = wi*mdot*(pj->u - pi->u);
 
+ /* Double check momentum*/
   
   /* Energy loss into thermal energy of stream */
   float post_gas_v2 = 0;
@@ -734,37 +748,19 @@ runner_iact_sym_wind_hydro(
   virtual_mass += wi*mdot*dt;
   pi->feedback_data.radius_stream = sqrt(virtual_mass/M_PI/chi/rho_j);
 
+    /* Dust destruction */
+  float rho_dust = pi->cooling_data.dust_mass * kernel_root *hi_inv;
+  float tsp = cooling->dust_grainsize * 3.2e-18 / (pow(us->UnitLength_in_cgs, 4) / us->UnitTime_in_cgs) *
+    rho_dust/phys_const->const_proton_mass / (pow(2e6/us->UnitTemperature_in_cgs/Tstream, 2.5) +1);
+  
+  float delta_rho = -3*rho_dust/tsp*dt;
+  pi->cooling_data.dust_mass += delta_rho / (kernel_root *hi_inv);
+
   /* Recouple if Mach < 1 */
-  if (sqrt(post_square_v)/(sqrt(pj->u/rho_j/gamma/(gamma - 1))))pi->feedback_data.decoupling_delay_time = 0.f;
-
-  /* Print wind properties*/
-  const float length_convert = cosmo->a * fb_props->length_to_kpc;
-  const float velocity_convert = cosmo->a_inv / fb_props->kms_to_internal;
-  const float rho_convert = cosmo->a3_inv * fb_props->rho_to_n_cgs;
-  const float u_convert =
-      cosmo->a_factor_internal_energy / fb_props->temp_to_u_factor;
-  message("WINDPROPS %.3f %lld %lld %g %g %g %g %g %g %g %g %g %g %g %g %d %g %g\n",
-        cosmo->z,
-        pi->id,
-        pj->id,
-        pi->gpart->fof_data.group_mass * fb_props->mass_to_solar_mass, 
-        pi->h * cosmo->a * fb_props->length_to_kpc,
-        pi->x[0] * length_convert,
-        pi->x[1] * length_convert,
-        pi->x[2] * length_convert,
-        pi->v_full[0] * velocity_convert,
-        pi->v_full[1] * velocity_convert,
-        pi->v_full[2] * velocity_convert,
-        pi->u * u_convert,
-        pi->rho * rho_convert,
-        pi->viscosity.v_sig * velocity_convert,
-        pi->feedback_data.decoupling_delay_time * fb_props->time_to_Myr,
-        pi->feedback_data.number_of_times_decoupled,
-        pi->chemistry_data.metal_mass_fraction_total,
-    pi->feedback_data.radius_stream * length_convert);
-
+  if (Mach < 1 )pi->feedback_data.decoupling_delay_time = 0.f;
 
   return;
+
   
 }
 
@@ -777,14 +773,14 @@ logger_windprops_printprops(
   /* Ignore COUPLED particles */
   if (pi->feedback_data.decoupling_delay_time <= 0.f) return;
   
-
+  if (pi->id % 1000 != 0) return;
   /* Print wind properties*/
   const float length_convert = cosmo->a * fb_props->length_to_kpc;
   const float velocity_convert = cosmo->a_inv / fb_props->kms_to_internal;
   const float rho_convert = cosmo->a3_inv * fb_props->rho_to_n_cgs;
   const float u_convert =
       cosmo->a_factor_internal_energy / fb_props->temp_to_u_factor;
-  fprintf(fp, "%.3f %lld %g %g %g %g %g %g %g %g %g %g %g %g %d %g %g\n",
+  fprintf(fp, "%.3f %lld %g %g %g %g %g %g %g %g %g %g %g %g %g %g %d\n",
         cosmo->z,
         pi->id,
         pi->gpart->fof_data.group_mass * fb_props->mass_to_solar_mass, 
@@ -797,11 +793,11 @@ logger_windprops_printprops(
         pi->v_full[2] * velocity_convert,
         pi->u * u_convert,
         pi->rho * rho_convert,
+        pi->feedback_data.radius_stream * length_convert,
+        pi->chemistry_data.metal_mass_fraction_total,
         pi->viscosity.v_sig * velocity_convert,
         pi->feedback_data.decoupling_delay_time * fb_props->time_to_Myr,
-        pi->feedback_data.number_of_times_decoupled,
-        pi->chemistry_data.metal_mass_fraction_total,
-    pi->feedback_data.radius_stream * length_convert);
+        pi->feedback_data.number_of_times_decoupled);
 
 
   return;

@@ -1,0 +1,465 @@
+./black_holes/EAGLE/black_holes.h:
+  230 :     bp->gpart->x[0] += bp->reposition.delta_x[0];
+  231 :     bp->gpart->x[1] += bp->reposition.delta_x[1];
+  232 :     bp->gpart->x[2] += bp->reposition.delta_x[2];
+  409 :   bp->gpart->mass += gas_mass;
+  437 :   bp->gpart->v_full[0] = bp->v[0];
+  438 :   bp->gpart->v_full[1] = bp->v[1];
+  439 :   bp->gpart->v_full[2] = bp->v[2];
+  506 :   bpi->gpart->mass += bpj->mass;
+  522 :   bpi->gpart->v_full[0] = bpi->v[0];
+  523 :   bpi->gpart->v_full[1] = bpi->v[1];
+  524 :   bpi->gpart->v_full[2] = bpi->v[2];
+./black_holes/SIMBA/black_holes.h:
+  229 :     bp->gpart->x[0] += bp->reposition.delta_x[0];
+  230 :     bp->gpart->x[1] += bp->reposition.delta_x[1];
+  231 :     bp->gpart->x[2] += bp->reposition.delta_x[2];
+  410 :   bp->gpart->mass += gas_mass;
+  438 :   bp->gpart->v_full[0] = bp->v[0];
+  439 :   bp->gpart->v_full[1] = bp->v[1];
+  440 :   bp->gpart->v_full[2] = bp->v[2];
+  503 :   bpi->gpart->mass += bpj->mass;
+  519 :   bpi->gpart->v_full[0] = bpi->v[0];
+  520 :   bpi->gpart->v_full[1] = bpi->v[1];
+  521 :   bpi->gpart->v_full[2] = bpi->v[2];
+./black_holes/SPIN_JET/black_holes.h:
+  268 :     bp->gpart->x[0] += bp->reposition.delta_x[0];
+  269 :     bp->gpart->x[1] += bp->reposition.delta_x[1];
+  270 :     bp->gpart->x[2] += bp->reposition.delta_x[2];
+  465 :   bp->gpart->mass += gas_mass;
+  493 :   bp->gpart->v_full[0] = bp->v[0];
+  494 :   bp->gpart->v_full[1] = bp->v[1];
+  495 :   bp->gpart->v_full[2] = bp->v[2];
+  566 :   bpi->gpart->mass += bpj->mass;
+  616 :   bpi->gpart->v_full[0] = bpi->v[0];
+  617 :   bpi->gpart->v_full[1] = bpi->v[1];
+  618 :   bpi->gpart->v_full[2] = bpi->v[2];
+./cell_convert_part.c:
+  228 :       c->stars.parts[i + 1].gpart->id_or_neg_offset--;
+  361 :       c->sinks.parts[i + 1].gpart->id_or_neg_offset--;
+  489 :     /* Update the gpart->spart links (shift by 1) */
+  574 :     p->gpart->time_bin = time_bin_inhibited;
+  575 :     p->gpart->id_or_neg_offset = p->id;
+  576 :     p->gpart->type = swift_type_dark_matter;
+  647 :     sp->gpart->time_bin = time_bin_inhibited;
+  648 :     sp->gpart->id_or_neg_offset = sp->id;
+  649 :     sp->gpart->type = swift_type_dark_matter;
+  686 :     bp->gpart->time_bin = time_bin_inhibited;
+  687 :     bp->gpart->id_or_neg_offset = bp->id;
+  688 :     bp->gpart->type = swift_type_dark_matter;
+  724 :     sink->gpart->time_bin = time_bin_inhibited;
+  725 :     sink->gpart->id_or_neg_offset = sink->id;
+  726 :     sink->gpart->type = swift_type_dark_matter;
+./cell_split.c:
+  141 :             parts[j].gpart->id_or_neg_offset = -(j + parts_offset);
+  148 :           parts[k].gpart->id_or_neg_offset = -(k + parts_offset);
+  260 :             sparts[j].gpart->id_or_neg_offset = -(j + sparts_offset);
+  266 :           sparts[k].gpart->id_or_neg_offset = -(k + sparts_offset);
+  315 :             bparts[j].gpart->id_or_neg_offset = -(j + bparts_offset);
+  321 :           bparts[k].gpart->id_or_neg_offset = -(k + bparts_offset);
+  370 :             sinks[j].gpart->id_or_neg_offset = -(j + sinks_offset);
+  376 :           sinks[k].gpart->id_or_neg_offset = -(k + sinks_offset);
+  501 :         parts[i].gpart->id_or_neg_offset = -(i + parts_offset);
+  552 :         sparts[i].gpart->id_or_neg_offset = -(i + sparts_offset);
+  608 :         sinks[i].gpart->id_or_neg_offset = -(i + sinks_offset);
+./common_io.c:
+ 1434 :  * @param vr_data The array of gpart-related VELOCIraptor output.
+ 1437 :  * @param vr_data_written The array of gpart-related VELOCIraptor with particles
+ 1493 :  * @param vr_data The array of gpart-related VELOCIraptor output.
+ 1496 :  * @param vr_data_written The array of gpart-related VELOCIraptor with particles
+ 1552 :  * @param vr_data The array of gpart-related VELOCIraptor output.
+ 1555 :  * @param vr_data_written The array of gpart-related VELOCIraptor with particles
+./engine_redistribute.c:
+  363 :             if (parts[k + offset].gpart->id_or_neg_offset > 0)                 \
+  365 :           parts[k + offset].gpart->id_or_neg_offset = -count;                  \
+  560 :         parts[k].gpart->id_or_neg_offset = -k;
+  563 :         parts[nr_parts].gpart->id_or_neg_offset = -nr_parts;
+  581 :         s->sparts[k].gpart->id_or_neg_offset = -k;
+  584 :         s->sparts[nr_sparts].gpart->id_or_neg_offset = -nr_sparts;
+  602 :         s->bparts[k].gpart->id_or_neg_offset = -k;
+  605 :         s->bparts[nr_bparts].gpart->id_or_neg_offset = -nr_bparts;
+./engine_strays.c:
+  107 :       s->parts[offset_parts + k].gpart->id_or_neg_offset =
+  152 :       s->sparts[offset_sparts + k].gpart->id_or_neg_offset =
+  195 :       s->bparts[offset_bparts + k].gpart->id_or_neg_offset =
+  318 :         s->parts[k].gpart->id_or_neg_offset = -k;
+  336 :         s->sparts[k].gpart->id_or_neg_offset = -k;
+  354 :         s->bparts[k].gpart->id_or_neg_offset = -k;
+./feedback/KIARA/feedback.h:
+  321 :   const double galaxy_stellar_mass = max(sp->gpart->fof_data.group_stellar_mass,
+  349 :       sp->gpart->fof_data.group_stellar_mass;
+  355 :       sp->gpart->fof_data.group_mass;
+./feedback/KIARA/feedback_iact.h:
+  198 :     pj->gpart->a_grav[1] * pj->gpart->v_full[2] -
+  199 :         pj->gpart->a_grav[2] * pj->gpart->v_full[1],
+  200 :     pj->gpart->a_grav[2] * pj->gpart->v_full[0] -
+  201 :         pj->gpart->a_grav[0] * pj->gpart->v_full[2],
+  202 :     pj->gpart->a_grav[0] * pj->gpart->v_full[1] -
+  203 :         pj->gpart->a_grav[1] * pj->gpart->v_full[0]
+  232 :       pj->gpart->fof_data.group_stellar_mass;
+  658 :       pow(pi->gpart->fof_data.group_stellar_mass / 102.329, 0.26178) *
+  662 :   if (pi->gpart->fof_data.group_stellar_mass==0.f) warning("Wind particle is not linked to any galaxy");
+  678 :       phys_const->const_newton_G*pi->gpart->fof_data.group_mass *
+./feedback/SIMBA/feedback.c:
+   63 :   double galaxy_stellar_mass = p->gpart->fof_data.group_stellar_mass;
+  145 :       p->gpart->fof_data.group_stellar_mass;
+  151 :       p->gpart->fof_data.group_mass * fb_props->mass_to_solar_mass;
+  235 :     p->gpart->a_grav[1] * p->gpart->v_full[2] - 
+  236 :         p->gpart->a_grav[2] * p->gpart->v_full[1],
+  237 :     p->gpart->a_grav[2] * p->gpart->v_full[0] - 
+  238 :         p->gpart->a_grav[0] * p->gpart->v_full[2],
+  239 :     p->gpart->a_grav[0] * p->gpart->v_full[1] - 
+  240 :         p->gpart->a_grav[1] * p->gpart->v_full[0]
+  272 :   p->gpart->fof_data.is_grouppable = 0;
+./fof.c:
+ 2435 :       bp->gpart->fof_data.is_grouppable = 1;
+ 3603 :     p->gpart->fof_data.is_grouppable = 0;
+ 3619 :     p->gpart->fof_data.is_grouppable = 1;
+ 3621 :     p->gpart->fof_data.is_grouppable = 0;
+ 3625 :   p->gpart->fof_data.part_sfr = max(p->sf_data.SFR, 0.f);
+ 3629 :   sp->gpart->fof_data.is_grouppable = 1;
+ 3636 :   return gpart->fof_data.is_grouppable;
+./fof_data.group_stellar_mass:
+   34 :   647 :     sp->gpart->time_bin = time_bin_inhibited;
+   35 :   648 :     sp->gpart->id_or_neg_offset = sp->id;
+   36 :   649 :     sp->gpart->type = swift_type_dark_matter;
+  534 :   321 :   const double galaxy_stellar_mass = max(sp->gpart->fof_data.group_stellar_mass,
+  535 :   349 :       sp->gpart->fof_data.group_stellar_mass;
+  536 :   355 :       sp->gpart->fof_data.group_mass;
+  670 :  3629 :   sp->gpart->fof_data.is_grouppable = 1;
+  707 :    34 :   647 :     sp->gpart->time_bin = time_bin_inhibited;
+  708 :    35 :   648 :     sp->gpart->id_or_neg_offset = sp->id;
+  709 :    36 :   649 :     sp->gpart->type = swift_type_dark_matter;
+ 1183 :   534 :   321 :   const double galaxy_stellar_mass = max(sp->gpart->fof_data.group_stellar_mass,
+ 1184 :   535 :   349 :       sp->gpart->fof_data.group_stellar_mass;
+ 1185 :   536 :   355 :       sp->gpart->fof_data.group_mass;
+ 1261 :    37 :   ret[0] = sp->gpart->fof_data.group_id;
+ 1269 :   321 :   sp->v[0] += sp->gpart->a_grav[0] * dt_kick_grav;
+ 1270 :   322 :   sp->v[1] += sp->gpart->a_grav[1] * dt_kick_grav;
+ 1271 :   323 :   sp->v[2] += sp->gpart->a_grav[2] * dt_kick_grav;
+ 1272 :   326 :   sp->v[0] += sp->gpart->a_grav_mesh[0] * dt_kick_mesh_grav;
+ 1273 :   327 :   sp->v[1] += sp->gpart->a_grav_mesh[1] * dt_kick_mesh_grav;
+ 1274 :   328 :   sp->v[2] += sp->gpart->a_grav_mesh[2] * dt_kick_mesh_grav;
+ 1275 :   331 :   sp->gpart->v_full[0] = sp->v[0];
+ 1276 :   332 :   sp->gpart->v_full[1] = sp->v[1];
+ 1277 :   333 :   sp->gpart->v_full[2] = sp->v[2];
+ 1447 :   934 :         sp->gpart->time_bin = get_time_bin(ti_new_step);
+ 1490 :   251 :   sp->gpart->mass += gas_mass;
+ 1506 :   279 :   sp->gpart->v_full[0] = sp->v[0];
+ 1507 :   280 :   sp->gpart->v_full[1] = sp->v[1];
+ 1508 :   281 :   sp->gpart->v_full[2] = sp->v[2];
+ 1586 :   274 :   sp->gpart->x[0] = sp->x[0];
+ 1587 :   275 :   sp->gpart->x[1] = sp->x[1];
+ 1588 :   276 :   sp->gpart->x[2] = sp->x[2];
+ 1591 :   339 :     sp->gpart->mass = mass_star;
+ 1664 :    40 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+ 1665 :    41 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+ 1666 :    42 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];
+ 1818 :    42 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+ 1819 :    43 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+ 1820 :    44 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];
+ 1972 :    19 :    40 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+ 1973 :    20 :    41 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+ 1974 :    21 :    42 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];
+ 2121 :   173 :    42 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+ 2122 :   174 :    43 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+ 2123 :   175 :    44 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];
+ 2270 :   327 :    19 :    40 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+ 2271 :   328 :    20 :    41 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+ 2272 :   329 :    21 :    42 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];
+ 2420 :   478 :    19 :    40 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+ 2421 :   479 :    20 :    41 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+ 2422 :   480 :    21 :    42 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];
+ 2569 :   627 :   173 :    42 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+ 2570 :   628 :   174 :    43 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+ 2571 :   629 :   175 :    44 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];
+ 2718 :   776 :   327 :    19 :    40 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+ 2719 :   777 :   328 :    20 :    41 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+ 2720 :   778 :   329 :    21 :    42 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];
+ 2869 :    19 :    40 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+ 2870 :    20 :    41 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+ 2871 :    21 :    42 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];
+ 3018 :   173 :    42 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+ 3019 :   174 :    43 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+ 3020 :   175 :    44 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];
+ 3167 :   327 :    19 :    40 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+ 3168 :   328 :    20 :    41 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+ 3169 :   329 :    21 :    42 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];
+./fof_io.h:
+   31 :   ret[0] = p->gpart->fof_data.group_id;
+   37 :   ret[0] = sp->gpart->fof_data.group_id;
+   43 :   ret[0] = bp->gpart->fof_data.group_id;
+./hydro/AnarchyPU/hydro_io.h:
+  136 :     ret[0] += p->gpart->a_grav[0] * dt_kick_grav;
+  137 :     ret[1] += p->gpart->a_grav[1] * dt_kick_grav;
+  138 :     ret[2] += p->gpart->a_grav[2] * dt_kick_grav;
+  143 :     ret[0] += p->gpart->a_grav_mesh[0] * dt_kick_grav_mesh;
+  144 :     ret[1] += p->gpart->a_grav_mesh[1] * dt_kick_grav_mesh;
+  145 :     ret[2] += p->gpart->a_grav_mesh[2] * dt_kick_grav_mesh;
+./hydro/Gadget2/hydro_csds.h:
+   54 :     acc[0] += p->gpart->a_grav[0] + p->gpart->a_grav_mesh[0];
+   55 :     acc[1] += p->gpart->a_grav[1] + p->gpart->a_grav_mesh[1];
+   56 :     acc[2] += p->gpart->a_grav[2] + p->gpart->a_grav_mesh[2];
+./hydro/Gadget2/hydro_io.h:
+  127 :     ret[0] += p->gpart->a_grav[0] * dt_kick_grav;
+  128 :     ret[1] += p->gpart->a_grav[1] * dt_kick_grav;
+  129 :     ret[2] += p->gpart->a_grav[2] * dt_kick_grav;
+  134 :     ret[0] += p->gpart->a_grav_mesh[0] * dt_kick_grav_mesh;
+  135 :     ret[1] += p->gpart->a_grav_mesh[1] * dt_kick_grav_mesh;
+  136 :     ret[2] += p->gpart->a_grav_mesh[2] * dt_kick_grav_mesh;
+./hydro/Gasoline/hydro_io.h:
+  138 :     ret[0] += p->gpart->a_grav[0] * dt_kick_grav;
+  139 :     ret[1] += p->gpart->a_grav[1] * dt_kick_grav;
+  140 :     ret[2] += p->gpart->a_grav[2] * dt_kick_grav;
+  145 :     ret[0] += p->gpart->a_grav_mesh[0] * dt_kick_grav_mesh;
+  146 :     ret[1] += p->gpart->a_grav_mesh[1] * dt_kick_grav_mesh;
+  147 :     ret[2] += p->gpart->a_grav_mesh[2] * dt_kick_grav_mesh;
+./hydro/Gizmo/MFM/hydro_velocities.h:
+   98 :     p->gpart->v_full[0] = p->v_full[0];
+   99 :     p->gpart->v_full[1] = p->v_full[1];
+  100 :     p->gpart->v_full[2] = p->v_full[2];
+./hydro/Gizmo/MFV/hydro_flux.h:
+  254 :     p->gpart->mass = p->conserved.mass;
+./hydro/Gizmo/MFV/hydro_velocities.h:
+  149 :     p->gpart->v_full[0] = p->v[0];
+  150 :     p->gpart->v_full[1] = p->v[1];
+  151 :     p->gpart->v_full[2] = p->v[2];
+./hydro/Gizmo/hydro.h:
+  696 :     a_grav[0] = p->gpart->a_grav[0] + p->gpart->a_grav_mesh[0];
+  697 :     a_grav[1] = p->gpart->a_grav[1] + p->gpart->a_grav_mesh[1];
+  698 :     a_grav[2] = p->gpart->a_grav[2] + p->gpart->a_grav_mesh[2];
+  700 :     grav_kick_factor[0] = dt_grav * p->gpart->a_grav[0];
+  701 :     grav_kick_factor[1] = dt_grav * p->gpart->a_grav[1];
+  702 :     grav_kick_factor[2] = dt_grav * p->gpart->a_grav[2];
+  704 :       grav_kick_factor[0] += dt_grav_mesh * p->gpart->a_grav_mesh[0];
+  705 :       grav_kick_factor[1] += dt_grav_mesh * p->gpart->a_grav_mesh[1];
+  706 :       grav_kick_factor[2] += dt_grav_mesh * p->gpart->a_grav_mesh[2];
+./hydro/Gizmo/hydro_getters.h:
+  310 :     v[0] += p->gpart->a_grav[0] * dt_kick_grav;
+  311 :     v[1] += p->gpart->a_grav[1] * dt_kick_grav;
+  312 :     v[2] += p->gpart->a_grav[2] * dt_kick_grav;
+./hydro/Minimal/hydro_io.h:
+  141 :     ret[0] += p->gpart->a_grav[0] * dt_kick_grav;
+  142 :     ret[1] += p->gpart->a_grav[1] * dt_kick_grav;
+  143 :     ret[2] += p->gpart->a_grav[2] * dt_kick_grav;
+  148 :     ret[0] += p->gpart->a_grav_mesh[0] * dt_kick_grav_mesh;
+  149 :     ret[1] += p->gpart->a_grav_mesh[1] * dt_kick_grav_mesh;
+  150 :     ret[2] += p->gpart->a_grav_mesh[2] * dt_kick_grav_mesh;
+./hydro/Phantom/hydro_io.h:
+  137 :     ret[0] += p->gpart->a_grav[0] * dt_kick_grav;
+  138 :     ret[1] += p->gpart->a_grav[1] * dt_kick_grav;
+  139 :     ret[2] += p->gpart->a_grav[2] * dt_kick_grav;
+  144 :     ret[0] += p->gpart->a_grav_mesh[0] * dt_kick_grav_mesh;
+  145 :     ret[1] += p->gpart->a_grav_mesh[1] * dt_kick_grav_mesh;
+  146 :     ret[2] += p->gpart->a_grav_mesh[2] * dt_kick_grav_mesh;
+./hydro/Planetary/hydro_io.h:
+  152 :     ret[0] += p->gpart->a_grav[0] * dt_kick_grav;
+  153 :     ret[1] += p->gpart->a_grav[1] * dt_kick_grav;
+  154 :     ret[2] += p->gpart->a_grav[2] * dt_kick_grav;
+  159 :     ret[0] += p->gpart->a_grav_mesh[0] * dt_kick_grav_mesh;
+  160 :     ret[1] += p->gpart->a_grav_mesh[1] * dt_kick_grav_mesh;
+  161 :     ret[2] += p->gpart->a_grav_mesh[2] * dt_kick_grav_mesh;
+./hydro/PressureEnergy/hydro_io.h:
+  138 :     ret[0] += p->gpart->a_grav[0] * dt_kick_grav;
+  139 :     ret[1] += p->gpart->a_grav[1] * dt_kick_grav;
+  140 :     ret[2] += p->gpart->a_grav[2] * dt_kick_grav;
+  145 :     ret[0] += p->gpart->a_grav_mesh[0] * dt_kick_grav_mesh;
+  146 :     ret[1] += p->gpart->a_grav_mesh[1] * dt_kick_grav_mesh;
+  147 :     ret[2] += p->gpart->a_grav_mesh[2] * dt_kick_grav_mesh;
+./hydro/PressureEnergyMorrisMonaghanAV/hydro_io.h:
+  139 :     ret[0] += p->gpart->a_grav[0] * dt_kick_grav;
+  140 :     ret[1] += p->gpart->a_grav[1] * dt_kick_grav;
+  141 :     ret[2] += p->gpart->a_grav[2] * dt_kick_grav;
+  146 :     ret[0] += p->gpart->a_grav_mesh[0] * dt_kick_grav_mesh;
+  147 :     ret[1] += p->gpart->a_grav_mesh[1] * dt_kick_grav_mesh;
+  148 :     ret[2] += p->gpart->a_grav_mesh[2] * dt_kick_grav_mesh;
+./hydro/PressureEntropy/hydro_io.h:
+  139 :     ret[0] += p->gpart->a_grav[0] * dt_kick_grav;
+  140 :     ret[1] += p->gpart->a_grav[1] * dt_kick_grav;
+  141 :     ret[2] += p->gpart->a_grav[2] * dt_kick_grav;
+  146 :     ret[0] += p->gpart->a_grav_mesh[0] * dt_kick_grav_mesh;
+  147 :     ret[1] += p->gpart->a_grav_mesh[1] * dt_kick_grav_mesh;
+  148 :     ret[2] += p->gpart->a_grav_mesh[2] * dt_kick_grav_mesh;
+./hydro/SPHENIX/hydro_csds.h:
+   54 :     acc[0] += p->gpart->a_grav[0] + p->gpart->a_grav_mesh[0];
+   55 :     acc[1] += p->gpart->a_grav[1] + p->gpart->a_grav_mesh[1];
+   56 :     acc[2] += p->gpart->a_grav[2] + p->gpart->a_grav_mesh[2];
+./hydro/SPHENIX/hydro_io.h:
+  134 :     ret[0] += p->gpart->a_grav[0] * dt_kick_grav;
+  135 :     ret[1] += p->gpart->a_grav[1] * dt_kick_grav;
+  136 :     ret[2] += p->gpart->a_grav[2] * dt_kick_grav;
+  141 :     ret[0] += p->gpart->a_grav_mesh[0] * dt_kick_grav_mesh;
+  142 :     ret[1] += p->gpart->a_grav_mesh[1] * dt_kick_grav_mesh;
+  143 :     ret[2] += p->gpart->a_grav_mesh[2] * dt_kick_grav_mesh;
+./hydro/Shadowswift/hydro.h:
+  551 :     p->gpart->v_full[0] = p->v[0];
+  552 :     p->gpart->v_full[1] = p->v[1];
+  553 :     p->gpart->v_full[2] = p->v[2];
+./kick.h:
+  250 :     p->v_full[0] += p->gpart->a_grav[0] * dt_kick_grav;
+  251 :     p->v_full[1] += p->gpart->a_grav[1] * dt_kick_grav;
+  252 :     p->v_full[2] += p->gpart->a_grav[2] * dt_kick_grav;
+  257 :     p->v_full[0] += p->gpart->a_grav_mesh[0] * dt_kick_mesh_grav;
+  258 :     p->v_full[1] += p->gpart->a_grav_mesh[1] * dt_kick_mesh_grav;
+  259 :     p->v_full[2] += p->gpart->a_grav_mesh[2] * dt_kick_mesh_grav;
+  264 :     p->gpart->v_full[0] = p->v_full[0];
+  265 :     p->gpart->v_full[1] = p->v_full[1];
+  266 :     p->gpart->v_full[2] = p->v_full[2];
+  321 :   sp->v[0] += sp->gpart->a_grav[0] * dt_kick_grav;
+  322 :   sp->v[1] += sp->gpart->a_grav[1] * dt_kick_grav;
+  323 :   sp->v[2] += sp->gpart->a_grav[2] * dt_kick_grav;
+  326 :   sp->v[0] += sp->gpart->a_grav_mesh[0] * dt_kick_mesh_grav;
+  327 :   sp->v[1] += sp->gpart->a_grav_mesh[1] * dt_kick_mesh_grav;
+  328 :   sp->v[2] += sp->gpart->a_grav_mesh[2] * dt_kick_mesh_grav;
+  331 :   sp->gpart->v_full[0] = sp->v[0];
+  332 :   sp->gpart->v_full[1] = sp->v[1];
+  333 :   sp->gpart->v_full[2] = sp->v[2];
+  378 :   bp->v[0] += bp->gpart->a_grav[0] * dt_kick_grav;
+  379 :   bp->v[1] += bp->gpart->a_grav[1] * dt_kick_grav;
+  380 :   bp->v[2] += bp->gpart->a_grav[2] * dt_kick_grav;
+  383 :   bp->v[0] += bp->gpart->a_grav_mesh[0] * dt_kick_mesh_grav;
+  384 :   bp->v[1] += bp->gpart->a_grav_mesh[1] * dt_kick_mesh_grav;
+  385 :   bp->v[2] += bp->gpart->a_grav_mesh[2] * dt_kick_mesh_grav;
+  388 :   bp->gpart->v_full[0] = bp->v[0];
+  389 :   bp->gpart->v_full[1] = bp->v[1];
+  390 :   bp->gpart->v_full[2] = bp->v[2];
+  437 :   sink->v[0] += sink->gpart->a_grav[0] * dt_kick_grav;
+  438 :   sink->v[1] += sink->gpart->a_grav[1] * dt_kick_grav;
+  439 :   sink->v[2] += sink->gpart->a_grav[2] * dt_kick_grav;
+  442 :   sink->v[0] += sink->gpart->a_grav_mesh[0] * dt_kick_mesh_grav;
+  443 :   sink->v[1] += sink->gpart->a_grav_mesh[1] * dt_kick_mesh_grav;
+  444 :   sink->v[2] += sink->gpart->a_grav_mesh[2] * dt_kick_mesh_grav;
+  447 :   sink->gpart->v_full[0] = sink->v[0];
+  448 :   sink->gpart->v_full[1] = sink->v[1];
+  449 :   sink->gpart->v_full[2] = sink->v[2];
+./part.c:
+   47 :       parts[k].gpart->id_or_neg_offset = -(k + offset);
+   63 :       sparts[k].gpart->id_or_neg_offset = -(k + offset);
+   79 :       sinks[k].gpart->id_or_neg_offset = -(k + offset);
+   95 :       bparts[k].gpart->id_or_neg_offset = -(k + offset);
+  433 :       if (parts[k].gpart->id_or_neg_offset != -(ptrdiff_t)k) {
+  438 :       if (parts[k].x[0] != parts[k].gpart->x[0] ||
+  439 :           parts[k].x[1] != parts[k].gpart->x[1] ||
+  440 :           parts[k].x[2] != parts[k].gpart->x[2])
+  444 :       if (hydro_get_mass(&parts[k]) != parts[k].gpart->mass)
+  448 :       if (parts[k].time_bin != parts[k].gpart->time_bin)
+  460 :       if (sparts[k].gpart->id_or_neg_offset != -(ptrdiff_t)k) {
+  465 :       if (sparts[k].x[0] != sparts[k].gpart->x[0] ||
+  466 :           sparts[k].x[1] != sparts[k].gpart->x[1] ||
+  467 :           sparts[k].x[2] != sparts[k].gpart->x[2])
+  471 :       if (sparts[k].mass != sparts[k].gpart->mass)
+  475 :       if (sparts[k].time_bin != sparts[k].gpart->time_bin)
+  487 :       if (bparts[k].gpart->id_or_neg_offset != -(ptrdiff_t)k) {
+  492 :       if (bparts[k].x[0] != bparts[k].gpart->x[0] ||
+  493 :           bparts[k].x[1] != bparts[k].gpart->x[1] ||
+  494 :           bparts[k].x[2] != bparts[k].gpart->x[2])
+  498 :       if (bparts[k].mass != bparts[k].gpart->mass)
+  502 :       if (bparts[k].time_bin != bparts[k].gpart->time_bin)
+  514 :       if (sinks[k].gpart->id_or_neg_offset != -(ptrdiff_t)k) {
+  519 :       if (sinks[k].x[0] != sinks[k].gpart->x[0] ||
+  520 :           sinks[k].x[1] != sinks[k].gpart->x[1] ||
+  521 :           sinks[k].x[2] != sinks[k].gpart->x[2])
+  525 :       if (sinks[k].mass != sinks[k].gpart->mass)
+  529 :       if (sinks[k].time_bin != sinks[k].gpart->time_bin)
+./runner_black_holes.c:
+  108 :         p->gpart->mass = hydro_get_mass(p);
+  339 :         cell_bp->gpart->mass = cell_bp->mass;
+  340 :         cell_bp->gpart->v_full[0] = cell_bp->v[0];
+  341 :         cell_bp->gpart->v_full[1] = cell_bp->v[1];
+  342 :         cell_bp->gpart->v_full[2] = cell_bp->v[2];
+./runner_time_integration.c:
+  187 :           xp->a_grav[0] = p->gpart->a_grav[0] + p->gpart->a_grav_mesh[0];
+  188 :           xp->a_grav[1] = p->gpart->a_grav[1] + p->gpart->a_grav_mesh[1];
+  189 :           xp->a_grav[2] = p->gpart->a_grav[2] + p->gpart->a_grav_mesh[2];
+  747 :         if (p->gpart != NULL) p->gpart->time_bin = p->time_bin;
+  934 :         sp->gpart->time_bin = get_time_bin(ti_new_step);
+ 1008 :         sink->gpart->time_bin = get_time_bin(ti_new_step);
+ 1078 :         bp->gpart->time_bin = get_time_bin(ti_new_step);
+ 1445 :           p->gpart->time_bin = p->time_bin;
+ 1597 :         if (p->gpart != NULL) p->gpart->time_bin = new_time_bin;
+ 1620 :           p->gpart->time_bin = p->time_bin;
+./sink/GEAR/sink.h:
+  251 :   sp->gpart->mass += gas_mass;
+  279 :   sp->gpart->v_full[0] = sp->v[0];
+  280 :   sp->gpart->v_full[1] = sp->v[1];
+  281 :   sp->gpart->v_full[2] = sp->v[2];
+  321 :   spi->gpart->mass += spj->mass;
+  337 :   spi->gpart->v_full[0] = spi->v[0];
+  338 :   spi->gpart->v_full[1] = spi->v[1];
+  339 :   spi->gpart->v_full[2] = spi->v[2];
+./sink/GEAR/sink_iact.h:
+   66 :     float potential_i = pi->gpart->potential;
+   67 :     float potential_j = pj->gpart->potential;
+./space.c:
+ 2239 :       if (parts[k].time_bin != parts[k].gpart->time_bin) {
+ 2241 :               parts[k].gpart->time_bin);
+./space_first_init.c:
+  150 :     /* Check part->gpart->part linkeage. */
+  151 :     if (p[k].gpart && p[k].gpart->id_or_neg_offset != -(k + delta))
+  328 :     if (sp[k].gpart && sp[k].gpart->id_or_neg_offset != -(k + delta))
+  419 :     if (bp[k].gpart && bp[k].gpart->id_or_neg_offset != -(k + delta))
+  485 :     if (sink[k].gpart && sink[k].gpart->id_or_neg_offset != -(k + delta))
+./space_rebuild.c:
+  223 :           s->parts[k].gpart->id_or_neg_offset = -k;
+  226 :           s->parts[nr_parts].gpart->id_or_neg_offset = -nr_parts;
+  275 :           s->sparts[k].gpart->id_or_neg_offset = -k;
+  278 :           s->sparts[nr_sparts].gpart->id_or_neg_offset = -nr_sparts;
+  325 :           s->bparts[k].gpart->id_or_neg_offset = -k;
+  328 :           s->bparts[nr_bparts].gpart->id_or_neg_offset = -nr_bparts;
+  376 :           s->sinks[k].gpart->id_or_neg_offset = -k;
+  379 :           s->sinks[nr_sinks].gpart->id_or_neg_offset = -nr_sinks;
+./space_sort.c:
+   76 :           parts[j].gpart->id_or_neg_offset = -(j + parts_offset);
+   82 :         parts[k].gpart->id_or_neg_offset = -(k + parts_offset);
+  138 :           sparts[j].gpart->id_or_neg_offset = -(j + sparts_offset);
+  143 :         sparts[k].gpart->id_or_neg_offset = -(k + sparts_offset);
+  199 :           bparts[j].gpart->id_or_neg_offset = -(j + bparts_offset);
+  204 :         bparts[k].gpart->id_or_neg_offset = -(k + bparts_offset);
+  259 :           sinks[j].gpart->id_or_neg_offset = -(j + sinks_offset);
+  264 :         sinks[k].gpart->id_or_neg_offset = -(k + sinks_offset);
+./star_formation/GEAR/star_formation.h:
+  274 :   sp->gpart->x[0] = sp->x[0];
+  275 :   sp->gpart->x[1] = sp->x[1];
+  276 :   sp->gpart->x[2] = sp->x[2];
+  297 :   p->gpart->x[0] = p->x[0];
+  298 :   p->gpart->x[1] = p->x[1];
+  299 :   p->gpart->x[2] = p->x[2];
+  339 :     sp->gpart->mass = mass_star;
+  343 :     p->gpart->mass = new_mass_gas;
+./stars/Basic/stars_csds.h:
+   40 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+   41 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+   42 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];
+./stars/GEAR/stars_csds.h:
+   42 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+   43 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+   44 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];
+./stars/fof_data:
+   19 :    40 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+   20 :    41 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+   21 :    42 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];
+  173 :    42 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+  174 :    43 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+  175 :    44 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];
+  327 :    19 :    40 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+  328 :    20 :    41 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+  329 :    21 :    42 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];
+  478 :    19 :    40 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+  479 :    20 :    41 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+  480 :    21 :    42 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];
+  627 :   173 :    42 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+  628 :   174 :    43 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+  629 :   175 :    44 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];
+  776 :   327 :    19 :    40 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+  777 :   328 :    20 :    41 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+  778 :   329 :    21 :    42 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];
+./stars/fof_data.:
+   19 :    40 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+   20 :    41 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+   21 :    42 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];
+  173 :    42 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+  174 :    43 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+  175 :    44 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];
+  327 :    19 :    40 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+  328 :    20 :    41 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+  329 :    21 :    42 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];

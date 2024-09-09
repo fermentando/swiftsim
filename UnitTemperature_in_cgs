@@ -1,0 +1,213 @@
+./autom4te.cache/output.0:
+ 3188 : 	    # program-specific install script used by HP pwplus--don't use.
+./autom4te.cache/output.1:
+ 3218 : 	    # program-specific install script used by HP pwplus--don't use.
+./autom4te.cache/output.2:
+ 3218 : 	    # program-specific install script used by HP pwplus--don't use.
+./configure:
+ 3218 : 	    # program-specific install script used by HP pwplus--don't use.
+./doc/RTD/source/GettingStarted/what_about_mpi.rst:
+   31 :     #SBATCH --cpus-per-task=<nThreadsPerMPIRank>
+./doc/RTD/source/ImplementationDetails/index.rst:
+   54 : `rand_r` with the thus-generated seed, we generate a sequence of 9 16-bit values
+./doc/onboardingGuide/source/submission_script.rst:
+   17 :     #SBATCH --cpus-per-task=<nThreadsPerMPIRank>
+./libtool:
+ 4345 :   -precious-files-regex REGEX
+ 7729 :       -precious-files-regex)
+./src/black_holes/EAGLE/black_holes_properties.h:
+  520 :         (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
+  539 :         (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
+./src/black_holes/SIMBA/black_holes_properties.h:
+  801 :         (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
+  820 :         (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
+./src/black_holes/SPIN_JET/black_holes_properties.h:
+  672 :         (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
+  691 :         (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
+  891 :     bp->v_jet *= (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
+  910 :     bp->v_jet_min *= (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
+  920 :     bp->v_jet_min *= (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
+  924 :     bp->v_jet_max *= (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
+  933 :     bp->v_jet_min *= (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
+  937 :     bp->v_jet_max *= (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
+./src/feedback/KIARA/feedback_iact.h:
+  631 :   const float T_threshold = 1e4 * us->UnitTemperature_in_cgs;
+  661 :       1e5*us->UnitLength_in_cgs/us->UnitTime_in_cgs;
+./src/neutrino/Default/neutrino_response.c:
+  251 :     UnitLengthCGS = us->UnitLength_in_cgs;
+  260 :   const double k_unit = UnitLengthCGS / us->UnitLength_in_cgs;
+./src/power_spectrum.c:
+  803 :   fprintf(fp, "#      Unit = %e cm**-1\n", pow(us->UnitLength_in_cgs, -1.));
+  810 :     fprintf(fp, "#      Unit = %e cm**3\n", pow(us->UnitLength_in_cgs, 3.));
+  824 :     fprintf(fp, "#      Unit = %e cm**3\n", pow(us->UnitLength_in_cgs, 3.));
+./src/star_formation/EAGLE/star_formation_logger.h:
+  189 :   fprintf(fp, "#     Unit = %e s\n", us->UnitTime_in_cgs);
+  197 :   fprintf(fp, "#     Unit = %e gram\n", us->UnitMass_in_cgs);
+  201 :           us->UnitMass_in_cgs / us->UnitTime_in_cgs);
+  207 :   fprintf(fp, "#     Unit = %e gram\n", us->UnitMass_in_cgs);
+  211 :           us->UnitMass_in_cgs / us->UnitTime_in_cgs);
+./src/star_formation/GEAR/star_formation_logger.h:
+  117 :   fprintf(fp, "#     Unit = %e seconds\n", us->UnitTime_in_cgs);
+  125 :   fprintf(fp, "#     Unit = %e gram\n", us->UnitMass_in_cgs);
+  131 :   fprintf(fp, "#     Unit = %e gram\n", us->UnitMass_in_cgs);
+./src/star_formation/KIARA/star_formation_logger.h:
+  189 :   fprintf(fp, "#     Unit = %e s\n", us->UnitTime_in_cgs);
+  197 :   fprintf(fp, "#     Unit = %e gram\n", us->UnitMass_in_cgs);
+  201 :           us->UnitMass_in_cgs / us->UnitTime_in_cgs);
+  207 :   fprintf(fp, "#     Unit = %e gram\n", us->UnitMass_in_cgs);
+  211 :           us->UnitMass_in_cgs / us->UnitTime_in_cgs);
+./src/star_formation/SIMBA/star_formation_logger.h:
+  189 :   fprintf(fp, "#     Unit = %e s\n", us->UnitTime_in_cgs);
+  197 :   fprintf(fp, "#     Unit = %e gram\n", us->UnitMass_in_cgs);
+  201 :           us->UnitMass_in_cgs / us->UnitTime_in_cgs);
+  207 :   fprintf(fp, "#     Unit = %e gram\n", us->UnitMass_in_cgs);
+  211 :           us->UnitMass_in_cgs / us->UnitTime_in_cgs);
+./src/statistics.c:
+  701 :   fprintf(file, "#      Unit = %e s\n", us->UnitTime_in_cgs);
+  709 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  714 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  720 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  725 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  730 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  736 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  739 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  742 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  745 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  767 :   fprintf(file, "#      Unit = %e cm\n", us->UnitLength_in_cgs);
+  773 :   fprintf(file, "#      Unit = %e cm\n", us->UnitLength_in_cgs);
+  779 :   fprintf(file, "#      Unit = %e cm\n", us->UnitLength_in_cgs);
+  820 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  823 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  828 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  833 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  838 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  843 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+./src/units.c:
+   46 :   us->UnitMass_in_cgs = 1.;
+   47 :   us->UnitLength_in_cgs = 1.;
+   48 :   us->UnitTime_in_cgs = 1.;
+   49 :   us->UnitCurrent_in_cgs = 1.;
+   50 :   us->UnitTemperature_in_cgs = 1.;
+   60 :   us->UnitMass_in_cgs = 1000.;
+   61 :   us->UnitLength_in_cgs = 100.;
+   62 :   us->UnitTime_in_cgs = 1.;
+   63 :   us->UnitCurrent_in_cgs = 1.;
+   64 :   us->UnitTemperature_in_cgs = 1.;
+   79 :   us->UnitMass_in_cgs = U_M_in_cgs;
+   80 :   us->UnitLength_in_cgs = U_L_in_cgs;
+   81 :   us->UnitTime_in_cgs = U_t_in_cgs;
+   82 :   us->UnitCurrent_in_cgs = U_C_in_cgs;
+   83 :   us->UnitTemperature_in_cgs = U_T_in_cgs;
+   99 :   us->UnitMass_in_cgs = parser_get_param_double(params, buffer);
+  101 :   us->UnitLength_in_cgs = parser_get_param_double(params, buffer);
+  104 :   us->UnitTime_in_cgs = us->UnitLength_in_cgs / unitVelocity;
+  106 :   us->UnitCurrent_in_cgs = parser_get_param_double(params, buffer);
+  108 :   us->UnitTemperature_in_cgs = parser_get_param_double(params, buffer);
+  127 :   us->UnitMass_in_cgs =
+  130 :   us->UnitLength_in_cgs =
+  136 :   us->UnitTime_in_cgs = us->UnitLength_in_cgs / unitVelocity;
+  138 :   us->UnitCurrent_in_cgs =
+  141 :   us->UnitTemperature_in_cgs =
+  169 :       return us->UnitMass_in_cgs;
+  171 :       return us->UnitLength_in_cgs;
+  173 :       return us->UnitTime_in_cgs;
+  175 :       return us->UnitCurrent_in_cgs;
+  177 :       return us->UnitTemperature_in_cgs;
+  802 :   message("\tUnit Mass:        %g", us->UnitMass_in_cgs);
+  803 :   message("\tUnit Length:      %g", us->UnitLength_in_cgs);
+  804 :   message("\tUnit Time:        %g", us->UnitTime_in_cgs);
+  805 :   message("\tUnit Current:     %g", us->UnitCurrent_in_cgs);
+  806 :   message("\tUnit Temperature: %g", us->UnitTemperature_in_cgs);
+./swift-1.0.0/config.guess:
+ 1221 : 	echo hppa1.1-stratus-sysv4
+ 1225 : 	echo i860-stratus-sysv4
+ 1229 : 	echo "$UNAME_MACHINE"-stratus-vos
+ 1233 : 	echo hppa1.1-stratus-vos
+./swift-1.0.0/config.sub:
+  474 : 		basic_machine=abacus-unknown
+./swift-1.0.0/configure:
+ 3217 : 	    # program-specific install script used by HP pwplus--don't use.
+./swift-1.0.0/ltmain.sh:
+ 3834 :   -precious-files-regex REGEX
+ 7218 :       -precious-files-regex)
+./swift-1.0.0/src/black_holes/EAGLE/black_holes_properties.h:
+  520 :         (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
+  539 :         (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
+./swift-1.0.0/src/black_holes/SPIN_JET/black_holes_properties.h:
+  568 :         (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
+  587 :         (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
+  797 :     bp->v_jet *= (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
+  816 :     bp->v_jet_min *= (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
+  820 :     bp->v_jet_max *= (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
+  830 :     bp->v_jet_min *= (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
+  834 :     bp->v_jet_max *= (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
+  843 :     bp->v_jet_min *= (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
+  847 :     bp->v_jet_max *= (1e5 / (us->UnitLength_in_cgs / us->UnitTime_in_cgs));
+./swift-1.0.0/src/feedback/KIARA/feedback_iact.h:
+  632 :   const float T_threshold = 1e4 * us->UnitTemperature_in_cgs;
+./swift-1.0.0/src/star_formation/EAGLE/star_formation_logger.h:
+  189 :   fprintf(fp, "#     Unit = %e s\n", us->UnitTime_in_cgs);
+  197 :   fprintf(fp, "#     Unit = %e gram\n", us->UnitMass_in_cgs);
+  201 :           us->UnitMass_in_cgs / us->UnitTime_in_cgs);
+  207 :   fprintf(fp, "#     Unit = %e gram\n", us->UnitMass_in_cgs);
+  211 :           us->UnitMass_in_cgs / us->UnitTime_in_cgs);
+./swift-1.0.0/src/star_formation/GEAR/star_formation_logger.h:
+  117 :   fprintf(fp, "#     Unit = %e seconds\n", us->UnitTime_in_cgs);
+  125 :   fprintf(fp, "#     Unit = %e gram\n", us->UnitMass_in_cgs);
+  131 :   fprintf(fp, "#     Unit = %e gram\n", us->UnitMass_in_cgs);
+./swift-1.0.0/src/statistics.c:
+  701 :   fprintf(file, "#      Unit = %e s\n", us->UnitTime_in_cgs);
+  709 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  714 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  720 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  725 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  730 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  736 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  739 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  742 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  745 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  767 :   fprintf(file, "#      Unit = %e cm\n", us->UnitLength_in_cgs);
+  773 :   fprintf(file, "#      Unit = %e cm\n", us->UnitLength_in_cgs);
+  779 :   fprintf(file, "#      Unit = %e cm\n", us->UnitLength_in_cgs);
+  820 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  823 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  828 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  833 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  838 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+  843 :   fprintf(file, "#      Unit = %e gram\n", us->UnitMass_in_cgs);
+./swift-1.0.0/src/units.c:
+   46 :   us->UnitMass_in_cgs = 1.;
+   47 :   us->UnitLength_in_cgs = 1.;
+   48 :   us->UnitTime_in_cgs = 1.;
+   49 :   us->UnitCurrent_in_cgs = 1.;
+   50 :   us->UnitTemperature_in_cgs = 1.;
+   60 :   us->UnitMass_in_cgs = 1000.;
+   61 :   us->UnitLength_in_cgs = 100.;
+   62 :   us->UnitTime_in_cgs = 1.;
+   63 :   us->UnitCurrent_in_cgs = 1.;
+   64 :   us->UnitTemperature_in_cgs = 1.;
+   79 :   us->UnitMass_in_cgs = U_M_in_cgs;
+   80 :   us->UnitLength_in_cgs = U_L_in_cgs;
+   81 :   us->UnitTime_in_cgs = U_t_in_cgs;
+   82 :   us->UnitCurrent_in_cgs = U_C_in_cgs;
+   83 :   us->UnitTemperature_in_cgs = U_T_in_cgs;
+   99 :   us->UnitMass_in_cgs = parser_get_param_double(params, buffer);
+  101 :   us->UnitLength_in_cgs = parser_get_param_double(params, buffer);
+  104 :   us->UnitTime_in_cgs = us->UnitLength_in_cgs / unitVelocity;
+  106 :   us->UnitCurrent_in_cgs = parser_get_param_double(params, buffer);
+  108 :   us->UnitTemperature_in_cgs = parser_get_param_double(params, buffer);
+  127 :   us->UnitMass_in_cgs =
+  130 :   us->UnitLength_in_cgs =
+  136 :   us->UnitTime_in_cgs = us->UnitLength_in_cgs / unitVelocity;
+  138 :   us->UnitCurrent_in_cgs =
+  141 :   us->UnitTemperature_in_cgs =
+  169 :       return us->UnitMass_in_cgs;
+  171 :       return us->UnitLength_in_cgs;
+  173 :       return us->UnitTime_in_cgs;
+  175 :       return us->UnitCurrent_in_cgs;
+  177 :       return us->UnitTemperature_in_cgs;
+  762 :   message("\tUnit Mass:        %g", us->UnitMass_in_cgs);
+  763 :   message("\tUnit Length:      %g", us->UnitLength_in_cgs);
+  764 :   message("\tUnit Time:        %g", us->UnitTime_in_cgs);
+  765 :   message("\tUnit Current:     %g", us->UnitCurrent_in_cgs);
+  766 :   message("\tUnit Temperature: %g", us->UnitTemperature_in_cgs);

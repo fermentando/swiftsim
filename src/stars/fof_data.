@@ -1,0 +1,460 @@
+./Basic/stars.h:
+   59 :         cosmo, (double)sp->birth_scale_factor, cosmo->a);
+   61 :     return time - (double)sp->birth_time;
+   81 :   sp->time_bin = 0;
+   84 :   sp->group_data.mass = 0.f;
+   85 :   sp->group_data.stellar_mass = 0.f;
+   99 :     sp->ids_ngbs_density[i] = -1;
+  100 :   sp->num_ngb_density = 0;
+  103 :   sp->density.wcount = 0.f;
+  104 :   sp->density.wcount_dh = 0.f;
+  152 :   const float h = sp->h;
+  158 :   sp->density.wcount *= h_inv_dim;
+  159 :   sp->density.wcount_dh *= h_inv_dim_plus_one;
+  175 :       sp->id, sp->h, sp->density.wcount);
+  178 :   const float h = sp->h;
+  183 :   sp->density.wcount = kernel_root * h_inv_dim;
+  184 :   sp->density.wcount_dh = 0.f;
+./Basic/stars_csds.h:
+   40 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+   41 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+   42 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];
+./Basic/stars_io.h:
+   58 :     ret[0] = box_wrap(sp->x[0], 0.0, s->dim[0]);
+   59 :     ret[1] = box_wrap(sp->x[1], 0.0, s->dim[1]);
+   60 :     ret[2] = box_wrap(sp->x[2], 0.0, s->dim[2]);
+   62 :     ret[0] = sp->x[0];
+   63 :     ret[1] = sp->x[1];
+   64 :     ret[2] = sp->x[2];
+   81 :   const integertime_t ti_beg = get_integer_time_begin(ti_current, sp->time_bin);
+   82 :   const integertime_t ti_end = get_integer_time_end(ti_current, sp->time_bin);
+   92 :   const struct gpart *gp = sp->gpart;
+  111 :   if (sp->gpart != NULL)
+  112 :     ret[0] = gravity_get_comoving_potential(sp->gpart);
+  195 :   sp->eta_neighbours = parser_get_opt_param_float(
+  199 :   sp->h_tolerance =
+  203 :   sp->target_neighbours = pow_dimension(sp->eta_neighbours) * kernel_norm;
+  204 :   const float delta_eta = sp->eta_neighbours * (1.f + sp->h_tolerance);
+  205 :   sp->delta_neighbours =
+  206 :       (pow_dimension(delta_eta) - pow_dimension(sp->eta_neighbours)) *
+  210 :   sp->max_smoothing_iterations = parser_get_opt_param_int(
+  217 :     sp->log_max_h_change = p->log_max_h_change;
+  219 :     sp->log_max_h_change = logf(powf(max_volume_change, hydro_dimension_inv));
+  231 :           sp->eta_neighbours, sp->target_neighbours);
+  234 :           sp->h_tolerance, sp->delta_neighbours);
+  239 :       pow_dimension(expf(sp->log_max_h_change)), sp->log_max_h_change);
+  242 :           sp->max_smoothing_iterations);
+  252 :                        sp->target_neighbours);
+  253 :   io_write_attribute_f(h_grpstars, "Kernel delta N_ngb", sp->delta_neighbours);
+  254 :   io_write_attribute_f(h_grpstars, "Kernel eta", sp->eta_neighbours);
+  256 :                        sp->h_tolerance);
+  258 :                        sp->log_max_h_change);
+  260 :                        pow_dimension(expf(sp->log_max_h_change)));
+  262 :                        sp->max_smoothing_iterations);
+./EAGLE/stars.h:
+   43 :   if (sp->birth_time == -1.) {
+   52 :     if (sp->birth_scale_factor >= cosmo->a) {
+   56 :           cosmo, sp->birth_scale_factor, cosmo->a);
+   59 :     star_age = time - sp->birth_time;
+   86 :         cosmo, (double)sp->birth_scale_factor, cosmo->a);
+   88 :     return time - (double)sp->birth_time;
+  102 :     sp->ids_ngbs_density[i] = -1;
+  103 :   sp->num_ngb_density = 0;
+  106 :   sp->density.wcount = 0.f;
+  107 :   sp->density.wcount_dh = 0.f;
+  110 :   sp->N_density = 0;
+  111 :   sp->N_density_exact = 0;
+  112 :   sp->rho = 0.f;
+  113 :   sp->rho_exact = 0.f;
+  114 :   sp->n = 0.f;
+  115 :   sp->n_exact = 0.f;
+  116 :   sp->inhibited_exact = 0;
+  137 :   sp->time_bin = 0;
+  138 :   sp->f_E = -1.f;
+  139 :   sp->count_since_last_enrichment = -1;
+  140 :   sp->number_of_heating_events = 0.;
+  141 :   sp->number_of_SNII_events = 0;
+  144 :     sp->birth_time = stars_properties->spart_first_init_birth_time;
+  146 :     sp->birth_density = stars_properties->spart_first_init_birth_density;
+  148 :     sp->birth_temperature =
+  152 :     sp->last_enrichment_time = scale_factor;
+  154 :     sp->last_enrichment_time = time;
+  159 :   sp->group_data.mass = 0.f;
+  160 :   sp->group_data.stellar_mass = 0.f;
+  211 :   const float h = sp->h;
+  217 :   sp->density.wcount *= h_inv_dim;
+  218 :   sp->density.wcount_dh *= h_inv_dim_plus_one;
+  221 :   sp->rho *= h_inv_dim;
+  222 :   sp->n *= h_inv_dim;
+  239 :       sp->id, sp->h, sp->density.wcount);
+  242 :   sp->density.wcount = 0.f;
+  243 :   sp->density.wcount_dh = 0.f;
+  303 :   const float mass = sp->mass_init;
+  307 :         cosmo, sp->birth_scale_factor, cosmo->a);
+  309 :     age = time - sp->birth_time;
+./EAGLE/stars_io.h:
+   67 :     ret[0] = box_wrap(sp->x[0], 0.0, s->dim[0]);
+   68 :     ret[1] = box_wrap(sp->x[1], 0.0, s->dim[1]);
+   69 :     ret[2] = box_wrap(sp->x[2], 0.0, s->dim[2]);
+   71 :     ret[0] = sp->x[0];
+   72 :     ret[1] = sp->x[1];
+   73 :     ret[2] = sp->x[2];
+   90 :   const integertime_t ti_beg = get_integer_time_begin(ti_current, sp->time_bin);
+   91 :   const integertime_t ti_end = get_integer_time_end(ti_current, sp->time_bin);
+  101 :   const struct gpart *gp = sp->gpart;
+  128 :   if (sp->gpart != NULL)
+  129 :     ret[0] = gravity_get_comoving_potential(sp->gpart);
+  249 :   sp->eta_neighbours = parser_get_opt_param_float(
+  253 :   sp->h_tolerance =
+  257 :   sp->target_neighbours = pow_dimension(sp->eta_neighbours) * kernel_norm;
+  258 :   const float delta_eta = sp->eta_neighbours * (1.f + sp->h_tolerance);
+  259 :   sp->delta_neighbours =
+  260 :       (pow_dimension(delta_eta) - pow_dimension(sp->eta_neighbours)) *
+  264 :   sp->max_smoothing_iterations = parser_get_opt_param_int(
+  271 :     sp->log_max_h_change = p->log_max_h_change;
+  273 :     sp->log_max_h_change = logf(powf(max_volume_change, hydro_dimension_inv));
+  276 :   sp->overwrite_birth_time =
+  278 :   sp->overwrite_birth_density =
+  280 :   sp->overwrite_birth_temperature =
+  284 :   if (sp->overwrite_birth_time) {
+  285 :     sp->spart_first_init_birth_time =
+  290 :   if (sp->overwrite_birth_density) {
+  291 :     sp->spart_first_init_birth_density =
+  296 :   if (sp->overwrite_birth_temperature) {
+  297 :     sp->spart_first_init_birth_temperature =
+  325 :   sp->max_time_step_young = max_time_step_young_Myr * Myr / conv_fac;
+  326 :   sp->max_time_step_old = max_time_step_old_Myr * Myr / conv_fac;
+  327 :   sp->age_threshold = age_threshold_Myr * Myr / conv_fac;
+  328 :   sp->age_threshold_unlimited = age_threshold_unlimited_Myr * Myr / conv_fac;
+  343 :     sp->lum_tables_Z[i] = (float *)malloc(count_Z * sizeof(float));
+  344 :     sp->lum_tables_ages[i] = (float *)malloc(count_ages * sizeof(float));
+  345 :     sp->lum_tables_luminosities[i] = (float *)malloc(count_L * sizeof(float));
+  359 :           sp->lum_tables_Z[i][k++] = log10(z);
+  363 :           sp->lum_tables_ages[i][j] = log10(age + FLT_MIN);
+  366 :         sp->lum_tables_luminosities[i][j] = log10(L);
+  383 :   sp->lum_tables_factor = to_Jansky / zero_point_AB;
+  393 :           sp->eta_neighbours, sp->target_neighbours);
+  396 :           sp->h_tolerance, sp->delta_neighbours);
+  401 :       pow_dimension(expf(sp->log_max_h_change)), sp->log_max_h_change);
+  404 :           sp->max_smoothing_iterations);
+  406 :   if (sp->overwrite_birth_time)
+  408 :             sp->spart_first_init_birth_time);
+  411 :           sp->age_threshold_unlimited);
+  412 :   message("Stars' young/old age threshold: %e [U_t]", sp->age_threshold);
+  414 :           sp->max_time_step_young);
+  415 :   message("Max time-step size of old stars: %e [U_t]", sp->max_time_step_old);
+  424 :                        sp->target_neighbours);
+  425 :   io_write_attribute_f(h_grpstars, "Kernel delta N_ngb", sp->delta_neighbours);
+  426 :   io_write_attribute_f(h_grpstars, "Kernel eta", sp->eta_neighbours);
+  428 :                        sp->h_tolerance);
+  430 :                        sp->log_max_h_change);
+  432 :                        pow_dimension(expf(sp->log_max_h_change)));
+  434 :                        sp->max_smoothing_iterations);
+  462 :     free(sp->lum_tables_Z[i]);
+  463 :     free(sp->lum_tables_ages[i]);
+  464 :     free(sp->lum_tables_luminosities[i]);
+./GEAR/stars.h:
+   58 :     const double birth = sp->birth_scale_factor;
+   62 :     return time - (double)sp->birth_time;
+   76 :     sp->ids_ngbs_density[i] = -1;
+   77 :   sp->num_ngb_density = 0;
+   80 :   sp->density.wcount = 0.f;
+   81 :   sp->density.wcount_dh = 0.f;
+  100 :   sp->time_bin = 0;
+  105 :   sp->group_data.mass = 0.f;
+  106 :   sp->group_data.stellar_mass = 0.f;
+  157 :   const float h = sp->h;
+  163 :   sp->density.wcount *= h_inv_dim;
+  164 :   sp->density.wcount_dh *= h_inv_dim_plus_one;
+  180 :       sp->id, sp->h, sp->density.wcount);
+  183 :   sp->density.wcount = 0.f;
+  184 :   sp->density.wcount_dh = 0.f;
+./GEAR/stars_csds.h:
+   42 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+   43 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+   44 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];
+./GEAR/stars_io.h:
+   60 :     ret[0] = box_wrap(sp->x[0], 0.0, s->dim[0]);
+   61 :     ret[1] = box_wrap(sp->x[1], 0.0, s->dim[1]);
+   62 :     ret[2] = box_wrap(sp->x[2], 0.0, s->dim[2]);
+   64 :     ret[0] = sp->x[0];
+   65 :     ret[1] = sp->x[1];
+   66 :     ret[2] = sp->x[2];
+   83 :   const integertime_t ti_beg = get_integer_time_begin(ti_current, sp->time_bin);
+   84 :   const integertime_t ti_end = get_integer_time_end(ti_current, sp->time_bin);
+   94 :   const struct gpart *gp = sp->gpart;
+  113 :   if (sp->gpart != NULL)
+  114 :     ret[0] = gravity_get_comoving_potential(sp->gpart);
+  207 :   sp->eta_neighbours = parser_get_opt_param_float(
+  211 :   sp->h_tolerance =
+  215 :   sp->target_neighbours = pow_dimension(sp->eta_neighbours) * kernel_norm;
+  216 :   const float delta_eta = sp->eta_neighbours * (1.f + sp->h_tolerance);
+  217 :   sp->delta_neighbours =
+  218 :       (pow_dimension(delta_eta) - pow_dimension(sp->eta_neighbours)) *
+  222 :   sp->max_smoothing_iterations = parser_get_opt_param_int(
+  229 :     sp->log_max_h_change = p->log_max_h_change;
+  231 :     sp->log_max_h_change = logf(powf(max_volume_change, hydro_dimension_inv));
+  243 :           sp->eta_neighbours, sp->target_neighbours);
+  246 :           sp->h_tolerance, sp->delta_neighbours);
+  251 :       pow_dimension(expf(sp->log_max_h_change)), sp->log_max_h_change);
+  254 :           sp->max_smoothing_iterations);
+  264 :                        sp->target_neighbours);
+  265 :   io_write_attribute_f(h_grpstars, "Kernel delta N_ngb", sp->delta_neighbours);
+  266 :   io_write_attribute_f(h_grpstars, "Kernel eta", sp->eta_neighbours);
+  268 :                        sp->h_tolerance);
+  270 :                        sp->log_max_h_change);
+  272 :                        pow_dimension(expf(sp->log_max_h_change)));
+  274 :                        sp->max_smoothing_iterations);
+./None/stars.h:
+   72 :   sp->group_data.mass = 0.f;
+   73 :   sp->group_data.stellar_mass = 0.f;
+./SIMBA/stars.h:
+   43 :   if (sp->birth_time == -1.) {
+   52 :     if (sp->birth_scale_factor >= cosmo->a) {
+   56 :           cosmo, sp->birth_scale_factor, cosmo->a);
+   59 :     star_age = time - sp->birth_time;
+   86 :         cosmo, (double)sp->birth_scale_factor, cosmo->a);
+   88 :     return time - (double)sp->birth_time;
+  102 :     sp->ids_ngbs_density[i] = -1;
+  103 :   sp->num_ngb_density = 0;
+  106 :   sp->density.wcount = 0.f;
+  107 :   sp->density.wcount_dh = 0.f;
+  110 :   sp->N_density = 0;
+  111 :   sp->N_density_exact = 0;
+  112 :   sp->rho = 0.f;
+  113 :   sp->rho_exact = 0.f;
+  114 :   sp->n = 0.f;
+  115 :   sp->n_exact = 0.f;
+  116 :   sp->inhibited_exact = 0;
+  137 :   sp->time_bin = 0;
+  140 :     sp->birth_time = stars_properties->spart_first_init_birth_time;
+  142 :     sp->birth_density = stars_properties->spart_first_init_birth_density;
+  144 :     sp->birth_temperature =
+  148 :     sp->last_enrichment_time = scale_factor;
+  150 :     sp->last_enrichment_time = time;
+  155 :   sp->group_data.mass = 0.f;
+  156 :   sp->group_data.stellar_mass = 0.f;
+  157 :   sp->group_data.ssfr = 0.f;
+  208 :   const float h = sp->h;
+  214 :   sp->density.wcount *= h_inv_dim;
+  215 :   sp->density.wcount_dh *= h_inv_dim_plus_one;
+  218 :   sp->rho *= h_inv_dim;
+  219 :   sp->n *= h_inv_dim;
+  236 :       sp->id, sp->h, sp->density.wcount);
+  239 :   sp->density.wcount = 0.f;
+  240 :   sp->density.wcount_dh = 0.f;
+  300 :   const float mass = sp->mass_init;
+  304 :         cosmo, sp->birth_scale_factor, cosmo->a);
+  306 :     age = time - sp->birth_time;
+./SIMBA/stars_io.h:
+   67 :     ret[0] = box_wrap(sp->x[0], 0.0, s->dim[0]);
+   68 :     ret[1] = box_wrap(sp->x[1], 0.0, s->dim[1]);
+   69 :     ret[2] = box_wrap(sp->x[2], 0.0, s->dim[2]);
+   71 :     ret[0] = sp->x[0];
+   72 :     ret[1] = sp->x[1];
+   73 :     ret[2] = sp->x[2];
+   90 :   const integertime_t ti_beg = get_integer_time_begin(ti_current, sp->time_bin);
+   91 :   const integertime_t ti_end = get_integer_time_end(ti_current, sp->time_bin);
+  101 :   const struct gpart *gp = sp->gpart;
+  128 :   if (sp->gpart != NULL)
+  129 :     ret[0] = gravity_get_comoving_potential(sp->gpart);
+  248 :   sp->eta_neighbours = parser_get_opt_param_float(
+  252 :   sp->h_tolerance =
+  256 :   sp->target_neighbours = pow_dimension(sp->eta_neighbours) * kernel_norm;
+  257 :   const float delta_eta = sp->eta_neighbours * (1.f + sp->h_tolerance);
+  258 :   sp->delta_neighbours =
+  259 :       (pow_dimension(delta_eta) - pow_dimension(sp->eta_neighbours)) *
+  263 :   sp->max_smoothing_iterations = parser_get_opt_param_int(
+  270 :     sp->log_max_h_change = p->log_max_h_change;
+  272 :     sp->log_max_h_change = logf(powf(max_volume_change, hydro_dimension_inv));
+  275 :   sp->overwrite_birth_time =
+  277 :   sp->overwrite_birth_density =
+  279 :   sp->overwrite_birth_temperature =
+  283 :   if (sp->overwrite_birth_time) {
+  284 :     sp->spart_first_init_birth_time =
+  289 :   if (sp->overwrite_birth_density) {
+  290 :     sp->spart_first_init_birth_density =
+  295 :   if (sp->overwrite_birth_temperature) {
+  296 :     sp->spart_first_init_birth_temperature =
+  324 :   sp->max_time_step_young = max_time_step_young_Myr * Myr / conv_fac;
+  325 :   sp->max_time_step_old = max_time_step_old_Myr * Myr / conv_fac;
+  326 :   sp->age_threshold = age_threshold_Myr * Myr / conv_fac;
+  327 :   sp->age_threshold_unlimited = age_threshold_unlimited_Myr * Myr / conv_fac;
+  342 :     sp->lum_tables_Z[i] = (float *)malloc(count_Z * sizeof(float));
+  343 :     sp->lum_tables_ages[i] = (float *)malloc(count_ages * sizeof(float));
+  344 :     sp->lum_tables_luminosities[i] = (float *)malloc(count_L * sizeof(float));
+  358 :           sp->lum_tables_Z[i][k++] = log10(z);
+  362 :           sp->lum_tables_ages[i][j] = log10(age + FLT_MIN);
+  365 :         sp->lum_tables_luminosities[i][j] = log10(L);
+  382 :   sp->lum_tables_factor = to_Jansky / zero_point_AB;
+  392 :           sp->eta_neighbours, sp->target_neighbours);
+  395 :           sp->h_tolerance, sp->delta_neighbours);
+  400 :       pow_dimension(expf(sp->log_max_h_change)), sp->log_max_h_change);
+  403 :           sp->max_smoothing_iterations);
+  405 :   if (sp->overwrite_birth_time)
+  407 :             sp->spart_first_init_birth_time);
+  410 :           sp->age_threshold_unlimited);
+  411 :   message("Stars' young/old age threshold: %e [U_t]", sp->age_threshold);
+  413 :           sp->max_time_step_young);
+  414 :   message("Max time-step size of old stars: %e [U_t]", sp->max_time_step_old);
+  423 :                        sp->target_neighbours);
+  424 :   io_write_attribute_f(h_grpstars, "Kernel delta N_ngb", sp->delta_neighbours);
+  425 :   io_write_attribute_f(h_grpstars, "Kernel eta", sp->eta_neighbours);
+  427 :                        sp->h_tolerance);
+  429 :                        sp->log_max_h_change);
+  431 :                        pow_dimension(expf(sp->log_max_h_change)));
+  433 :                        sp->max_smoothing_iterations);
+  461 :     free(sp->lum_tables_Z[i]);
+  462 :     free(sp->lum_tables_ages[i]);
+  463 :     free(sp->lum_tables_luminosities[i]);
+./fof_data.:
+    2 :    59 :         cosmo, (double)sp->birth_scale_factor, cosmo->a);
+    3 :    61 :     return time - (double)sp->birth_time;
+    4 :    81 :   sp->time_bin = 0;
+    5 :    84 :   sp->group_data.mass = 0.f;
+    6 :    85 :   sp->group_data.stellar_mass = 0.f;
+    7 :    99 :     sp->ids_ngbs_density[i] = -1;
+    8 :   100 :   sp->num_ngb_density = 0;
+    9 :   103 :   sp->density.wcount = 0.f;
+   10 :   104 :   sp->density.wcount_dh = 0.f;
+   11 :   152 :   const float h = sp->h;
+   12 :   158 :   sp->density.wcount *= h_inv_dim;
+   13 :   159 :   sp->density.wcount_dh *= h_inv_dim_plus_one;
+   14 :   175 :       sp->id, sp->h, sp->density.wcount);
+   15 :   178 :   const float h = sp->h;
+   16 :   183 :   sp->density.wcount = kernel_root * h_inv_dim;
+   17 :   184 :   sp->density.wcount_dh = 0.f;
+   19 :    40 :   acc[0] = sp->gpart->a_grav[0] + sp->gpart->a_grav_mesh[0];
+   20 :    41 :   acc[1] = sp->gpart->a_grav[1] + sp->gpart->a_grav_mesh[1];
+   21 :    42 :   acc[2] = sp->gpart->a_grav[2] + sp->gpart->a_grav_mesh[2];
+   23 :    58 :     ret[0] = box_wrap(sp->x[0], 0.0, s->dim[0]);
+   24 :    59 :     ret[1] = box_wrap(sp->x[1], 0.0, s->dim[1]);
+   25 :    60 :     ret[2] = box_wrap(sp->x[2], 0.0, s->dim[2]);
+   26 :    62 :     ret[0] = sp->x[0];
+   27 :    63 :     ret[1] = sp->x[1];
+   28 :    64 :     ret[2] = sp->x[2];
+   29 :    81 :   const integertime_t ti_beg = get_integer_time_begin(ti_current, sp->time_bin);
+   30 :    82 :   const integertime_t ti_end = get_integer_time_end(ti_current, sp->time_bin);
+   31 :    92 :   const struct gpart *gp = sp->gpart;
+   32 :   111 :   if (sp->gpart != NULL)
+   33 :   112 :     ret[0] = gravity_get_comoving_potential(sp->gpart);
+   34 :   195 :   sp->eta_neighbours = parser_get_opt_param_float(
+   35 :   199 :   sp->h_tolerance =
+   36 :   203 :   sp->target_neighbours = pow_dimension(sp->eta_neighbours) * kernel_norm;
+   37 :   204 :   const float delta_eta = sp->eta_neighbours * (1.f + sp->h_tolerance);
+   38 :   205 :   sp->delta_neighbours =
+   39 :   206 :       (pow_dimension(delta_eta) - pow_dimension(sp->eta_neighbours)) *
+   40 :   210 :   sp->max_smoothing_iterations = parser_get_opt_param_int(
+   41 :   217 :     sp->log_max_h_change = p->log_max_h_change;
+   42 :   219 :     sp->log_max_h_change = logf(powf(max_volume_change, hydro_dimension_inv));
+   43 :   231 :           sp->eta_neighbours, sp->target_neighbours);
+   44 :   234 :           sp->h_tolerance, sp->delta_neighbours);
+   45 :   239 :       pow_dimension(expf(sp->log_max_h_change)), sp->log_max_h_change);
+   46 :   242 :           sp->max_smoothing_iterations);
+   47 :   252 :                        sp->target_neighbours);
+   48 :   253 :   io_write_attribute_f(h_grpstars, "Kernel delta N_ngb", sp->delta_neighbours);
+   49 :   254 :   io_write_attribute_f(h_grpstars, "Kernel eta", sp->eta_neighbours);
+   50 :   256 :                        sp->h_tolerance);
+   51 :   258 :                        sp->log_max_h_change);
+   52 :   260 :                        pow_dimension(expf(sp->log_max_h_change)));
+   53 :   262 :                        sp->max_smoothing_iterations);
+   55 :    43 :   if (sp->birth_time == -1.) {
+   56 :    52 :     if (sp->birth_scale_factor >= cosmo->a) {
+   57 :    56 :           cosmo, sp->birth_scale_factor, cosmo->a);
+   58 :    59 :     star_age = time - sp->birth_time;
+   59 :    86 :         cosmo, (double)sp->birth_scale_factor, cosmo->a);
+   60 :    88 :     return time - (double)sp->birth_time;
+   61 :   102 :     sp->ids_ngbs_density[i] = -1;
+   62 :   103 :   sp->num_ngb_density = 0;
+   63 :   106 :   sp->density.wcount = 0.f;
+   64 :   107 :   sp->density.wcount_dh = 0.f;
+   65 :   110 :   sp->N_density = 0;
+   66 :   111 :   sp->N_density_exact = 0;
+   67 :   112 :   sp->rho = 0.f;
+   68 :   113 :   sp->rho_exact = 0.f;
+   69 :   114 :   sp->n = 0.f;
+   70 :   115 :   sp->n_exact = 0.f;
+   71 :   116 :   sp->inhibited_exact = 0;
+   72 :   137 :   sp->time_bin = 0;
+   73 :   138 :   sp->f_E = -1.f;
+   74 :   139 :   sp->count_since_last_enrichment = -1;
+   75 :   140 :   sp->number_of_heating_events = 0.;
+   76 :   141 :   sp->number_of_SNII_events = 0;
+   77 :   144 :     sp->birth_time = stars_properties->spart_first_init_birth_time;
+   78 :   146 :     sp->birth_density = stars_properties->spart_first_init_birth_density;
+   79 :   148 :     sp->birth_temperature =
+   80 :   152 :     sp->last_enrichment_time = scale_factor;
+   81 :   154 :     sp->last_enrichment_time = time;
+   82 :   159 :   sp->group_data.mass = 0.f;
+   83 :   160 :   sp->group_data.stellar_mass = 0.f;
+   84 :   211 :   const float h = sp->h;
+   85 :   217 :   sp->density.wcount *= h_inv_dim;
+   86 :   218 :   sp->density.wcount_dh *= h_inv_dim_plus_one;
+   87 :   221 :   sp->rho *= h_inv_dim;
+   88 :   222 :   sp->n *= h_inv_dim;
+   89 :   239 :       sp->id, sp->h, sp->density.wcount);
+   90 :   242 :   sp->density.wcount = 0.f;
+   91 :   243 :   sp->density.wcount_dh = 0.f;
+   92 :   303 :   const float mass = sp->mass_init;
+   93 :   307 :         cosmo, sp->birth_scale_factor, cosmo->a);
+   94 :   309 :     age = time - sp->birth_time;
+   96 :    67 :     ret[0] = box_wrap(sp->x[0], 0.0, s->dim[0]);
+   97 :    68 :     ret[1] = box_wrap(sp->x[1], 0.0, s->dim[1]);
+   98 :    69 :     ret[2] = box_wrap(sp->x[2], 0.0, s->dim[2]);
+   99 :    71 :     ret[0] = sp->x[0];
+  100 :    72 :     ret[1] = sp->x[1];
+  101 :    73 :     ret[2] = sp->x[2];
+  102 :    90 :   const integertime_t ti_beg = get_integer_time_begin(ti_current, sp->time_bin);
+  103 :    91 :   const integertime_t ti_end = get_integer_time_end(ti_current, sp->time_bin);
+  104 :   101 :   const struct gpart *gp = sp->gpart;
+  105 :   128 :   if (sp->gpart != NULL)
+  106 :   129 :     ret[0] = gravity_get_comoving_potential(sp->gpart);
+  107 :   249 :   sp->eta_neighbours = parser_get_opt_param_float(
+  108 :   253 :   sp->h_tolerance =
+  109 :   257 :   sp->target_neighbours = pow_dimension(sp->eta_neighbours) * kernel_norm;
+  110 :   258 :   const float delta_eta = sp->eta_neighbours * (1.f + sp->h_tolerance);
+  111 :   259 :   sp->delta_neighbours =
+  112 :   260 :       (pow_dimension(delta_eta) - pow_dimension(sp->eta_neighbours)) *
+  113 :   264 :   sp->max_smoothing_iterations = parser_get_opt_param_int(
+  114 :   271 :     sp->log_max_h_change = p->log_max_h_change;
+  115 :   273 :     sp->log_max_h_change = logf(powf(max_volume_change, hydro_dimension_inv));
+  116 :   276 :   sp->overwrite_birth_time =
+  117 :   278 :   sp->overwrite_birth_density =
+  118 :   280 :   sp->overwrite_birth_temperature =
+  119 :   284 :   if (sp->overwrite_birth_time) {
+  120 :   285 :     sp->spart_first_init_birth_time =
+  121 :   290 :   if (sp->overwrite_birth_density) {
+  122 :   291 :     sp->spart_first_init_birth_density =
+  123 :   296 :   if (sp->overwrite_birth_temperature) {
+  124 :   297 :     sp->spart_first_init_birth_temperature =
+  125 :   325 :   sp->max_time_step_young = max_time_step_young_Myr * Myr / conv_fac;
+  126 :   326 :   sp->max_time_step_old = max_time_step_old_Myr * Myr / conv_fac;
+  127 :   327 :   sp->age_threshold = age_threshold_Myr * Myr / conv_fac;
+  128 :   328 :   sp->age_threshold_unlimited = age_threshold_unlimited_Myr * Myr / conv_fac;
+  129 :   343 :     sp->lum_tables_Z[i] = (float *)malloc(count_Z * sizeof(float));
+  130 :   344 :     sp->lum_tables_ages[i] = (float *)malloc(count_ages * sizeof(float));
+  131 :   345 :     sp->lum_tables_luminosities[i] = (float *)malloc(count_L * sizeof(float));
+  132 :   359 :           sp->lum_tables_Z[i][k++] = log10(z);
+  133 :   363 :           sp->lum_tables_ages[i][j] = log10(age + FLT_MIN);
+  134 :   366 :         sp->lum_tables_luminosities[i][j] = log10(L);
+  135 :   383 :   sp->lum_tables_factor = to_Jansky / zero_point_AB;
+  136 :   393 :           sp->eta_neighbours, sp->target_neighbours);
+  137 :   396 :           sp->h_tolerance, sp->delta_neighbours);
+  138 :   401 :       pow_dimension(expf(sp->log_max_h_change)), sp->log_max_h_change);
+  139 :   404 :           sp->max_smoothing_iterations);
+  140 :   406 :   if (sp->overwrite_birth_time)
+  141 :   408 :             sp->spart_first_init_birth_time);
+  142 :   411 :           sp->age_threshold_unlimited);
+  143 :   412 :   message("Stars' young/old age threshold: %e [U_t]", sp->age_threshold);
+  144 :   414 :           sp->max_time_step_young);
+  145 :   415 :   message("Max time-step size of old stars: %e [U_t]", sp->max_time_step_old);
+  146 :   424 :                        sp->target_neighbours);
+  147 :   425 :   io_write_attribute_f(h_grpstars, "Kernel delta N_ngb", sp->delta_neighbours);
+  148 :   426 :   io_write_attribute_f(h_grpstars, "Kernel eta", sp->eta_neighbours);
+  149 :   428 :                        sp->h_tolerance);
+  150 :   430 :                        sp->log_max_h_change);
+  151 :   432 :                        pow_dimension(expf(sp->log_max_h_change)));
+  152 :   434 :                        sp->max_smoothing_iterations);
+  153 :   462 :     free(sp->lum_tables_Z[i]);
+  154 :   463 :     free(sp->lum_tables_ages[i]);
+  155 :   464 :     free(sp->lum_tables_luminosities[i]);
