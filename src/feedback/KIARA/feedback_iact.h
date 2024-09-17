@@ -281,7 +281,8 @@ feedback_kick_gas_around_star(
   pj->feedback_data.decoupling_delay_time =
       fb_props->wind_decouple_time_factor *
       cosmology_get_time_since_big_bang(cosmo, cosmo->a);
-  pj->feedback_data.radius_stream = -1.f;
+  const float rho_volumefilling = 0.3 * phys_const->const_proton_mass/pow(us->UnitLength_in_cgs, 3);
+  pj->feedback_data.radius_stream = si->sf_data.SFR * si->feedback_mass_to_launch/ (sp->mass *2 * M_PI * rho_volumefilling * (wind_velocity - sp->hydro_properties.velocity));
   pj->feedback_data.destruction_time= 0.f;
 
   /** Log the wind event.
@@ -627,7 +628,7 @@ runner_iact_sym_wind_hydro(
   float dt =
       hydro_compute_timestep(pi, xpi, hydro_props, cosmo); // or get_timestep(p->time_bin, e->time_base) from feedback.c
 
-  /* Stream properties */
+  /* Kinetic and thermal properties of interacting gas */
   const float T_threshold = 1e4 / us->UnitTemperature_in_cgs;
   if (cooling_convert_u_to_temp(pi->u, xpi->cooling_data.e_frac, cooling, pi) < T_threshold){
     pi->u = cooling_convert_temp_to_u(T_threshold, xpi->cooling_data.e_frac, cooling, pi);
@@ -643,52 +644,44 @@ runner_iact_sym_wind_hydro(
   const float mu_j = (1. + yhelium_j) / (1. + xpj->cooling_data.e_frac + 4. * yhelium_j);
   float chi = Thot/mu_j/Tstream*mu_i; //assuming collisional equilibrium
   
-  float square_v = 0;
-  float prior_gas_v2 = 0;
+
+  /* We compute the velocity of the phases*/
+  float stream_prior_v2 = 0;
+  float surroundings_prior_v2 = 0;
 
   for (int i=0; i<3; i++){
-    square_v += pi->v_full[i]*pi->v_full[i];
-    prior_gas_v2 += pj->v_full[i]*pj->v_full[i];
+    stream_prior_v2 += pi->v_full[i]*pi->v_full[i];
+    surroundings_prior_v2 += pj->v_full[i]*pj->v_full[i];
   }
 
-  float Mach = sqrt(square_v-prior_gas_v2)/(sqrt(pj->u/rho_j/gamma/(gamma - 1)));
-  
-
-  /* Estimate radius of outflow*/          
-
-  const double v_circ_sys_units =
-      pow(pi->gpart->fof_data.group_stellar_mass / 102.329, 0.26178) *
-      pow(cosmo->H / cosmo->H0, 1. / 3.) *
-      1e5*us->UnitLength_in_cgs/us->UnitTime_in_cgs;
-    
-  if (pi->gpart->fof_data.group_stellar_mass==0.f) warning("Wind particle is not linked to any galaxy");
-    
+  float Mach = sqrt(stream_prior_v2-surroundings_prior_v2)/(sqrt(pj->u/rho_j/gamma/(gamma - 1)));  
 
 
-  /* Ghost particle for the mixing layer properties of interaction */
+  /* Estimate mixing layer properties from ghost particles */
   pk->rho = sqrt(pj->rho*pi->rho);    
   pk->u = cooling_convert_temp_to_u(sqrt(Tstream*Thot), xpk->cooling_data.e_frac, cooling, pk);
 
   const float Lambda_mix = sqrt(pk->u)
     /cooling_time(phys_const, us, hydro_props, cosmo, cooling, pk, xpk);
 
-  /* Length scales for mixing layer */
+
+  /* If wind has just been ejected, start destruction time variable */
+
   if (pi->feedback_data.destruction_time <= 0.f){
-
-    pi->feedback_data.radius_stream = 
-      sqrt(3 * pi->u/chi/rho_j/(gamma - 1)) / pow(v_circ_sys_units, 3.) *
-      phys_const->const_newton_G*pi->gpart->fof_data.group_mass *
-      pow(0.5, 3); //radius to disk height ratio
-
     pi->feedback_data.destruction_time = 0.f;
   }
+
+  /* Define cooling and destruction timescales for streams*/
+
   float tcoolmix = phys_const->const_boltzmann_k* sqrt(Tstream*Thot) / ((gamma -1 )* Lambda_mix);
   float tsc = 2 * pi->feedback_data.radius_stream / sqrt(pi->u/chi/rho_j*gamma/(gamma - 1));
-  float tshear = pi->feedback_data.radius_stream/ sqrt(square_v);
+  float tshear = pi->feedback_data.radius_stream/ sqrt(stream_prior_v2 - surroundings_prior_v2);
+
   float virtual_mass = chi*rho_j*pow(pi->feedback_data.radius_stream,2)*M_PI;
   float mdot;
+  float delta_m;
 
-  /* Does the stream satisfy the survival criterion? */
+  /* If the cloud is destroyed, updated destruction time and mdot*/
   if (tcoolmix/tshear > 1.f){
 
     /* If cloud just began to be destroyed, update initial mass */
@@ -698,14 +691,10 @@ runner_iact_sym_wind_hydro(
 
     pi->feedback_data.destruction_time += dt;
     mdot = -1/tshear*pi->feedback_data.initial_mass*exp(-pi->feedback_data.destruction_time/tshear);
-      
-    /* Solving chemistry */
-    for (int elem = 0; elem < chemistry_element_count; ++elem) { 
-      pi->chemistry_data.metal_mass_fraction[elem] *= 1 + wi * mdot * dt / virtual_mass;
-      pj->chemistry_data.metal_mass_fraction[elem] -= wi* mdot * dt /pj->mass * pi->chemistry_data.metal_mass_fraction[elem];
-    }
+    delta_m = abs(mdot);
   }
 
+  /* If cloud survives, cancel destruction time and update mdot*/
   if (tcoolmix/tshear < 1.f) {
 
     /* If cloud just began to grow, update initial mass */
@@ -715,34 +704,41 @@ runner_iact_sym_wind_hydro(
 
     pi->feedback_data.destruction_time = 0.f;
     mdot = 4/chi * pi->feedback_data.initial_mass/tsc * pow(tcoolmix/tsc, -0.25);
-    
-    /* Solving chemistry*/
-    for (int elem = 0; elem < chemistry_element_count; ++elem) {
-      pi->chemistry_data.metal_mass_fraction[elem] += wi* mdot * dt /virtual_mass * pj->chemistry_data.metal_mass_fraction[elem];
-      pj->chemistry_data.metal_mass_fraction[elem] *= 1 - wi * mdot * dt / pj->mass;
-    }  
-  }
-
-  /* Update particle internal energy */
-  for (int i=0; i<3; i++){
-    pi->v_full[i] *= wi*virtual_mass/(virtual_mass + mdot*dt);
-  }
-
-  pi->u = wi*mdot*(pi->u - pj->u);
-  pj->u = wi*mdot*(pj->u - pi->u);
-
- /* Double check momentum*/
+    delta_m = abs(mdot);
   
-  /* Energy loss into thermal energy of stream */
-  float post_gas_v2 = 0;
-  float post_square_v = 0;
-  for (int i=0; i<3; i++){
-    post_square_v += pi->v_full[i]*pi->v_full[i];
-    post_gas_v2 += pj->v_full[i]*pj->v_full[i];
+  } 
+
+  /* Change in properties of wind and surroundings as it travels: 
+
+   * 1) Update chemistry */
+  for (int elem = 0; elem < chemistry_element_count; ++elem) { 
+    pi->chemistry_data.metal_mass_fraction[elem]  = wi* 1/pi->mass * ((pi->mass - delta_m)* pi->chemistry_data.metal_mass_fraction[elem] + delta_m * pj->chemistry_data.metal_mass_fraction[elem]);
+    pj->chemistry_data.metal_mass_fraction[elem]  = wi * 1/pj->mass * ((pj->mass - delta_m)* pj->chemistry_data.metal_mass_fraction[elem] + delta_m * pi->chemistry_data.metal_mass_fraction[elem]);
+
   }
-  
-  float delE = 0.5*((virtual_mass+mdot*dt)*post_square_v - virtual_mass*square_v + pj->mass*(post_gas_v2 - prior_gas_v2));
-  pi->u += wi*delE;
+
+   /* 2) Update particles' internal energy */
+   pi->u = wi * 1/pi->mass * ((pi->mass - delta_m)*pi->u + delta_m * pj->u);
+   pj->u = wi * 1/pj->mass * ((pj->mass - delta_m)*pj->u + delta_m * pi->u);
+
+
+   /* 3) Conserve momentum */
+  float stream_post_v2 = 0;
+  float surroundings_post_v2 = 0;
+  for (int i=0; i<3; i++){
+
+    pi->v_full[i] = wi * 1/pi->mass * ((pi->mass - delta_m)*pi->v_full[i] + delta_m * pj->v_full[i]);
+    pj->v_full[i] = wi * 1/pj->mass * ((pj->mass - delta_m)*pj->v_full[i] + delta_m * pi->v_full[i]);
+
+    stream_post_v2 += pi->v_full[i]*pi->v_full[i];
+    surroundings_post_v2 += pj->v_full[i]*pj->v_full[i];
+  }
+
+   /* 4) Deposit excess energy onto stream */
+  float delE = 0.5*(pi->mass * (stream_post_v2 - stream_prior_v2) + pj->mass*(surroundings_post_v2 - surroundings_prior_v2));
+  pi->u += wi*delE/pi->mass;
+
+
 
   /* Update virtual mass of stream */
   virtual_mass += wi*mdot*dt;
