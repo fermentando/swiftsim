@@ -32,8 +32,19 @@ struct feedback_part_data {
   /*! Number of times decoupled */
   int number_of_times_decoupled;
 
+  /*! Radius of outflowing stream */
+  float radius_stream;
+
   /*! The time to shut off cooling for this particle */
   float cooling_shutoff_delay_time;
+
+  /*! Initial mass of the stream */
+  float initial_mass;
+
+  /*! Time from decoupling */
+  float destruction_time;
+
+
 
 #if COOLING_GRACKLE_MODE >= 2
   /*! Number of SNe (of any type) going off in nearby stars */

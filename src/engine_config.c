@@ -198,6 +198,7 @@ void engine_config(int restart, int fof, struct engine *e,
   e->file_timesteps = NULL;
   e->file_rt_subcycles = NULL;
   e->sfh_logger = NULL;
+  e->windprops_logger = NULL;
   e->verbose = verbose;
   e->wallclock_time = 0.f;
   e->restart_dump = 0;
@@ -594,6 +595,16 @@ void engine_config(int restart, int fof, struct engine *e,
                                             e->physical_constants);
         fflush(e->sfh_logger);
       }
+    }
+
+    /* Initialize the wind props logger if running with feedback */
+    if (e->policy & engine_policy_hydro) {
+      e->windprops_logger = fopen("Windprops.txt", mode);
+  
+      if (e->windprops_logger == NULL)
+        error("Could not open the file 'Windprops.txt' with mode '%s'.", mode);
+  
+    }
     }
   }
 

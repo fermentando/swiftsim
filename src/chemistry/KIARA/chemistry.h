@@ -293,7 +293,11 @@ static INLINE void chemistry_init_backend(struct swift_params* parameter_file,
   data->C_Smagorinsky = parser_get_opt_param_float(parameter_file,
                                                    "KIARAChemistry:diffusion_coefficient",
                                                    0.23);
-
+  
+  /* Is firehose feedback on? */
+  data->firehose_feedback = parsers_get_param_int(parameter_file,
+                                                    "KIARAChemistry:firehose_feedback",)
+                                                    
   /* Read the total metallicity */
   data->initial_metal_mass_fraction_total = parser_get_opt_param_float(
       parameter_file, "KIARAChemistry:init_abundance_metal", -1);

@@ -151,7 +151,7 @@ void DOPAIR1_NAIVE(struct runner *r, struct cell *restrict ci,
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
         runner_iact_nonsym_timebin(r2, dx, hj, hi, pj, pi, a, H);
         runner_iact_nonsym_rt_timebin(r2, dx, hj, hi, pj, pi, a, H);
-        runner_iact_nonsym_diffusion(r2, dx, hj, hi, pj, pi, a, H, time_base,
+        runner_iact_nonsym_diffusion(r2, dx, hi, hj, pi, pj, a, H, time_base,
                                      t_current, cosmo, with_cosmology);
 #endif
       }
@@ -266,8 +266,9 @@ void DOPAIR2_NAIVE(struct runner *r, struct cell *restrict ci,
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
           runner_iact_timebin(r2, dx, hi, hj, pi, pj, a, H);
           runner_iact_rt_timebin(r2, dx, hi, hj, pi, pj, a, H);
-          runner_iact_diffusion(r2, dx, hi, hj, pi, pj, a, H, time_base,
-                                t_current, cosmo, with_cosmology);
+          runner_iact_diffusion(r2, dx, hj, hi, pj, &cj->hydro.xparts[pjd], pi, &ci->hydro.xparts[pid], a, H, time_base,
+                                     t_current, cosmo, with_cosmology, e->chemistry, e->feedback_props, e->hydro_properties,
+                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);
 #endif
         } else if (pi_active) {
 
@@ -408,8 +409,9 @@ void DOSELF1_NAIVE(struct runner *r, struct cell *restrict c) {
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
         runner_iact_timebin(r2, dx, hi, hj, pi, pj, a, H);
         runner_iact_rt_timebin(r2, dx, hi, hj, pi, pj, a, H);
-        runner_iact_diffusion(r2, dx, hi, hj, pi, pj, a, H, time_base,
-                              t_current, cosmo, with_cosmology);
+        runner_iact_diffusion(r2, dx, hj, hi, pj, &cj->hydro.xparts[pjd], pi, &ci->hydro.xparts[pid], a, H, time_base,
+                                     t_current, cosmo, with_cosmology, e->chemistry, e->feedback_props, e->hydro_properties,
+                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);
 #endif
       } else if (doi) {
 
@@ -549,8 +551,9 @@ void DOSELF2_NAIVE(struct runner *r, struct cell *restrict c) {
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
         runner_iact_timebin(r2, dx, hi, hj, pi, pj, a, H);
         runner_iact_rt_timebin(r2, dx, hi, hj, pi, pj, a, H);
-        runner_iact_diffusion(r2, dx, hi, hj, pi, pj, a, H, time_base,
-                              t_current, cosmo, with_cosmology);
+        runner_iact_diffusion(r2, dx, hj, hi, pj, &cj->hydro.xparts[pjd], pi, &ci->hydro.xparts[pid], a, H, time_base,
+                                     t_current, cosmo, with_cosmology, e->chemistry, e->feedback_props, e->hydro_properties,
+                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);
 #endif
       } else if (doi) {
 
@@ -582,7 +585,7 @@ void DOSELF2_NAIVE(struct runner *r, struct cell *restrict c) {
         runner_iact_nonsym_pressure_floor(r2, dx, hj, hi, pj, pi, a, H);
         runner_iact_nonsym_star_formation(r2, dx, hj, hi, pj, pi, a, H);
         runner_iact_nonsym_sink(r2, dx, hj, hi, pj, pi, a, H,
-                                e->sink_properties->cut_off_radius);
+                                e->sink_properties->cut_off_radius); e-
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
         runner_iact_nonsym_timebin(r2, dx, hj, hi, pj, pi, a, H);
@@ -1720,8 +1723,9 @@ void DOPAIR2(struct runner *r, struct cell *ci, struct cell *cj, const int sid,
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
             runner_iact_timebin(r2, dx, hi, hj, pi, pj, a, H);
             runner_iact_rt_timebin(r2, dx, hi, hj, pi, pj, a, H);
-            runner_iact_diffusion(r2, dx, hi, hj, pi, pj, a, H, time_base,
-                                  t_current, cosmo, with_cosmology);
+            runner_iact_diffusion(r2, dx, hj, hi, pj, &cj->hydro.xparts[pjd], pi, &ci->hydro.xparts[pid], a, H, time_base,
+                                     t_current, cosmo, with_cosmology, e->chemistry, e->feedback_props, e->hydro_properties,
+                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);
 #endif
           } else {
             IACT_NONSYM(r2, dx, hi, hj, pi, pj, a, H);
@@ -1937,8 +1941,9 @@ void DOPAIR2(struct runner *r, struct cell *ci, struct cell *cj, const int sid,
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
             runner_iact_timebin(r2, dx, hj, hi, pj, pi, a, H);
             runner_iact_rt_timebin(r2, dx, hj, hi, pj, pi, a, H);
-            runner_iact_diffusion(r2, dx, hj, hi, pj, pi, a, H, time_base,
-                                  t_current, cosmo, with_cosmology);
+            runner_iact_diffusion(r2, dx, hj, hi, pj, &cj->hydro.xparts[pjd], pi, &ci->hydro.xparts[pid], a, H, time_base,
+                                     t_current, cosmo, with_cosmology, e->chemistry, e->feedback_props, e->hydro_properties,
+                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);
 #endif
           } else {
             IACT_NONSYM(r2, dx, hj, hi, pj, pi, a, H);
@@ -2221,8 +2226,9 @@ void DOSELF1(struct runner *r, struct cell *restrict c) {
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
             runner_iact_timebin(r2, dx, hi, hj, pi, pj, a, H);
             runner_iact_rt_timebin(r2, dx, hi, hj, pi, pj, a, H);
-            runner_iact_diffusion(r2, dx, hi, hj, pi, pj, a, H, time_base,
-                                  t_current, cosmo, with_cosmology);
+            runner_iact_diffusion(r2, dx, hj, hi, pj, &cj->hydro.xparts[pjd], pi, &ci->hydro.xparts[pid], a, H, time_base,
+                                     t_current, cosmo, with_cosmology, e->chemistry, e->feedback_props, e->hydro_properties,
+                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);
 #endif
           } else if (doi) {
 
@@ -2460,8 +2466,9 @@ void DOSELF2(struct runner *r, struct cell *restrict c) {
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
             runner_iact_timebin(r2, dx, hi, hj, pi, pj, a, H);
             runner_iact_rt_timebin(r2, dx, hi, hj, pi, pj, a, H);
-            runner_iact_diffusion(r2, dx, hi, hj, pi, pj, a, H, time_base,
-                                  t_current, cosmo, with_cosmology);
+            runner_iact_diffusion(r2, dx, hj, hi, pj, &cj->hydro.xparts[pjd], pi, &ci->hydro.xparts[pid], a, H, time_base,
+                                     t_current, cosmo, with_cosmology, e->chemistry, e->feedback_props, e->hydro_properties,
+                e->physical_constants, e->internal_units, e->cooling_func, e->windprops_logger);
 #endif
           } else {
             IACT_NONSYM(r2, dx, hi, hj, pi, pj, a, H);

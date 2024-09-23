@@ -53,6 +53,9 @@ struct chemistry_global_data {
 
   /*! The metal diffusion coefficient (Smag ~0.23) */
   float C_Smagorinsky;
+
+  /*! Is firehose feedback turned on? */
+  int firehose_feedback;
 };
 
 /**
