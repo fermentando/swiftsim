@@ -2424,10 +2424,8 @@ int engine_step(struct engine *e) {
 
 #ifdef SWIFT_DEBUG_CHECKS
       fflush(e->sfh_logger);
-      fflush(e->windprops_logger);
 #else
       if (e->step % 32 == 0) fflush(e->sfh_logger);
-      if (e->step % 32 == 0) fflush(e->windprops_logger);
 #endif
     }
 
@@ -3774,9 +3772,6 @@ void engine_clean(struct engine *e, const int fof, const int restart) {
 
     if (e->policy & engine_policy_star_formation) {
       fclose(e->sfh_logger); 
-    }
-    if (e->policy & engine_policy_hydro){
-      fclose(e->windprops_logger);
     }
 
 #ifndef RT_NONE

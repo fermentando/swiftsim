@@ -295,8 +295,8 @@ static INLINE void chemistry_init_backend(struct swift_params* parameter_file,
                                                    0.23);
   
   /* Is firehose feedback on? */
-  data->firehose_feedback = parsers_get_param_int(parameter_file,
-                                                    "KIARAChemistry:firehose_feedback",)
+  data->firehose_feedback = parser_get_param_int(parameter_file,
+                                                    "KIARAChemistry:firehose_feedback");
                                                     
   /* Read the total metallicity */
   data->initial_metal_mass_fraction_total = parser_get_opt_param_float(

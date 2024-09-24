@@ -437,9 +437,6 @@ struct engine {
   /* File handle for the SFH logger file */
   FILE *sfh_logger;
 
-  /* File handle for the Firehose Wind particles logger file */
-  FILE *windprops_logger;
-
   /* The current step number. */
   int step;
 
