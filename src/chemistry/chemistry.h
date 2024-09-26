@@ -261,6 +261,18 @@ __attribute__((always_inline)) INLINE static void chemistry_first_init_spart(
 }
 
 /**
+ * @brief Sets the chemistry properties of the sink particles to a valid start
+ * state.
+ *
+ * @param data The global chemistry information.
+ * @param sink Pointer to the sink particle data.
+ * Required by space_first_init.c
+ */
+__attribute__((always_inline)) INLINE static void chemistry_first_init_sink(
+    const struct chemistry_global_data* data, struct sink* restrict sink) {}
+
+
+/**
  * @brief Initialises the chemistry properties.
  *
  * @param parameter_file The parsed parameter file.
@@ -281,7 +293,11 @@ static INLINE void chemistry_init_backend(struct swift_params* parameter_file,
   data->C_Smagorinsky = parser_get_opt_param_float(parameter_file,
                                                    "KIARAChemistry:diffusion_coefficient",
                                                    0.23);
-
+  
+  /* Is firehose feedback on? */
+  data->firehose_feedback = parser_get_param_int(parameter_file,
+                                                    "KIARAChemistry:firehose_feedback");
+                                                    
   /* Read the total metallicity */
   data->initial_metal_mass_fraction_total = parser_get_opt_param_float(
       parameter_file, "KIARAChemistry:init_abundance_metal", -1);
