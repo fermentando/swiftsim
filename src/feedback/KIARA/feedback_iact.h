@@ -723,6 +723,12 @@ runner_iact_sym_wind_hydro(
     pj->chemistry_data.metal_mass_fraction[elem]  = wi * 1/pj->mass * ((pj->mass - delta_m)* pj->chemistry_data.metal_mass_fraction[elem] + delta_m * pi->chemistry_data.metal_mass_fraction[elem]);
 
   }
+  
+  float pi_dust_m_fraction = *(pi->cooling_data.dust_mass_fraction);
+  float pj_dust_m_fraction = *(pj->cooling_data.dust_mass_fraction);
+ 
+  *(pi->cooling_data.dust_mass_fraction)  = wi* 1/pi->mass * ((pi->mass - delta_m) * pi_dust_m_fraction + delta_m * pj_dust_m_fraction);
+  *(pj->cooling_data.dust_mass_fraction)  = wi * 1/pj->mass * ((pj->mass - delta_m) * pj_dust_m_fraction + delta_m * pi_dust_m_fraction);
 
    /* 2) Update particles' internal energy */
    pi->u = wi * 1/pi->mass * ((pi->mass - delta_m)*pi->u + delta_m * pj->u);
