@@ -138,7 +138,7 @@ void DOSELF1_STARS(struct runner *r, struct cell *c, int timer) {
 #elif (FUNCTION_TASK_LOOP == TASK_LOOP_FEEDBACK)
         runner_iact_nonsym_feedback_apply(r2, dx, hi, hj, si, pj, xpj, cosmo,
                                           e->hydro_properties,
-                                          e->feedback_props, ti_current);
+                                          e->feedback_props, ti_current, e->internal_units, e->physical_constants);
 #endif
       }
       if (r2 < hig2 && with_rt) {
@@ -268,7 +268,7 @@ void DO_NONSYM_PAIR1_STARS_NAIVE(struct runner *r, struct cell *restrict ci,
 #elif (FUNCTION_TASK_LOOP == TASK_LOOP_FEEDBACK)
         runner_iact_nonsym_feedback_apply(r2, dx, hi, hj, si, pj, xpj, cosmo,
                                           e->hydro_properties,
-                                          e->feedback_props, ti_current);
+                                          e->feedback_props, ti_current, e->internal_units, e->physical_constants);
 #endif
       }
       if (r2 < hig2 && with_rt) {
@@ -463,7 +463,7 @@ void DO_SYM_PAIR1_STARS(struct runner *r, struct cell *ci, struct cell *cj,
 #elif (FUNCTION_TASK_LOOP == TASK_LOOP_FEEDBACK)
           runner_iact_nonsym_feedback_apply(r2, dx, hi, hj, spi, pj, xpj, cosmo,
                                             e->hydro_properties,
-                                            e->feedback_props, ti_current);
+                                            e->feedback_props, ti_current, e->internal_units, e->physical_constants);
 #endif
         }
         if (r2 < hig2 && with_rt) {
@@ -617,7 +617,7 @@ void DO_SYM_PAIR1_STARS(struct runner *r, struct cell *ci, struct cell *cj,
 #elif (FUNCTION_TASK_LOOP == TASK_LOOP_FEEDBACK)
           runner_iact_nonsym_feedback_apply(r2, dx, hj, hi, spj, pi, xpi, cosmo,
                                             e->hydro_properties,
-                                            e->feedback_props, ti_current);
+                                            e->feedback_props, ti_current, e->internal_units, e->physical_constants);
 #endif
         }
         if (r2 < hjg2 && with_rt) {
@@ -753,7 +753,7 @@ void DOPAIR1_SUBSET_STARS(struct runner *r, struct cell *restrict ci,
 #elif (FUNCTION_TASK_LOOP == TASK_LOOP_FEEDBACK)
           error("No subset feedback iact functions do (or should) exist!");
           /* runner_iact_nonsym_feedback_apply(r2, dx, hi, hj, spi, pj, xpj,
-           * cosmo, ti_current); */
+           * cosmo, ti_current, e->internal_units, e->physical_constants); */
 #endif
         }
       } /* loop over the parts in cj. */
@@ -816,7 +816,7 @@ void DOPAIR1_SUBSET_STARS(struct runner *r, struct cell *restrict ci,
 #elif (FUNCTION_TASK_LOOP == TASK_LOOP_FEEDBACK)
           error("No subset feedback iact functions do (or should) exist!");
           /* runner_iact_nonsym_feedback_apply(r2, dx, hi, hj, spi, pj, xpj,
-           * cosmo, ti_current); */
+           * cosmo, ti_current, e->internal_units, e->physical_constants); */
 #endif
         }
       } /* loop over the parts in cj. */
@@ -913,7 +913,7 @@ void DOPAIR1_SUBSET_STARS_NAIVE(struct runner *r, struct cell *restrict ci,
 #elif (FUNCTION_TASK_LOOP == TASK_LOOP_FEEDBACK)
         error("No subset feedback iact functions do (or should) exist! .");
         /* runner_iact_nonsym_feedback_apply(r2, dx, hi, hj, spi, pj, xpj,
-         * cosmo, ti_current); */
+         * cosmo, ti_current, e->internal_units, e->physical_constants); */
 #endif
       }
     } /* loop over the parts in cj. */
@@ -1000,7 +1000,7 @@ void DOSELF1_SUBSET_STARS(struct runner *r, struct cell *restrict ci,
 #elif (FUNCTION_TASK_LOOP == TASK_LOOP_FEEDBACK)
         error("No subset feedback iact functions do (or should) exist!");
         /* runner_iact_nonsym_feedback_apply(r2, dx, hi, pj->h, spi, pj, xpj, */
-        /*                                   cosmo, e, ti_current); */
+        /*                                   cosmo, e, ti_current, e->internal_units, e->physical_constants); */
 #endif
       }
     } /* loop over the parts in cj. */

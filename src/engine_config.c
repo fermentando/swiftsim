@@ -595,8 +595,6 @@ void engine_config(int restart, int fof, struct engine *e,
         fflush(e->sfh_logger);
       }
     }
-
-    }
   }
 
   /* Print policy */

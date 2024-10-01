@@ -174,7 +174,7 @@ feedback_kick_gas_around_star(
 
   /* Compute radius and properties of stream */
   const float rho_volumefilling = 0.3 * phys_const->const_proton_mass/pow(us->UnitLength_in_cgs, 3);
-  pj->feedback_data.radius_stream = pj->sf_data.SFR * si->feedback_data.feedback_mass_to_launch/ (si->mass *2 * M_PI * rho_volumefilling * (si->feedback_data.feedback_wind_velocity - si->velocity));
+  pj->feedback_data.radius_stream = pj->sf_data.SFR * si->feedback_data.feedback_mass_to_launch/ (si->mass *2 * M_PI * rho_volumefilling * (si->feedback_data.feedback_wind_velocity));//should probably subtract star's velocity,  - si->velocity));
   pj->feedback_data.destruction_time= 0.f;
 
 
@@ -460,7 +460,9 @@ runner_iact_nonsym_feedback_apply(
     struct spart *si, struct part *pj, struct xpart *xpj,
     const struct cosmology *cosmo, const struct hydro_props *hydro_props,
     const struct feedback_props *fb_props, 
-    const integertime_t ti_current) {
+    const integertime_t ti_current,
+    const struct unit_system* us,
+    const struct phys_const* phys_const) {
 
   /* Ignore decoupled particles */
   if (pj->feedback_data.decoupling_delay_time > 0.f) {
@@ -483,7 +485,7 @@ runner_iact_nonsym_feedback_apply(
     fb_props, ti_current);
 
   /* Do kinetic wind feedback */
-  feedback_kick_gas_around_star(si, pj, xpj, cosmo, fb_props, ti_current);
+  feedback_kick_gas_around_star(si, pj, xpj, cosmo, fb_props, ti_current, us, phys_const);
 
 #if COOLING_GRACKLE_MODE >= 2
   /* NOT USED: Compute G0 contribution from star to the gas particle in Habing units of 
