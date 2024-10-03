@@ -26,6 +26,7 @@
 
 #include "runner_doiact_hydro.h"
 
+
 /**
  * @brief Compute the interactions between a cell pair (non-symmetric case).
  *
@@ -262,6 +263,9 @@ void DOPAIR2_NAIVE(struct runner *r, struct cell *restrict ci,
           runner_iact_star_formation(r2, dx, hi, hj, pi, pj, a, H);
           runner_iact_sink(r2, dx, hi, hj, pi, pj, a, H,
                            e->sink_properties->cut_off_radius);
+          runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &ci->hydro.xparts[pid], pj, &cj->hydro.xparts[pjd], 
+                cosmo, e->hydro_properties, e->feedback_props, shell_current,
+                e->physical_constants, e->internal_units, e->cooling_func);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
           runner_iact_timebin(r2, dx, hi, hj, pi, pj, a, H);
@@ -404,6 +408,9 @@ void DOSELF1_NAIVE(struct runner *r, struct cell *restrict c) {
         runner_iact_star_formation(r2, dx, hi, hj, pi, pj, a, H);
         runner_iact_sink(r2, dx, hi, hj, pi, pj, a, H,
                          e->sink_properties->cut_off_radius);
+        runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &c->hydro.xparts[pid], pj, &c->hydro.xparts[pjd], 
+                cosmo,e->hydro_properties,e->feedback_props, shell_current,
+                e->physical_constants, e->internal_units, e->cooling_func);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
         runner_iact_timebin(r2, dx, hi, hj, pi, pj, a, H);
@@ -545,6 +552,9 @@ void DOSELF2_NAIVE(struct runner *r, struct cell *restrict c) {
         runner_iact_star_formation(r2, dx, hi, hj, pi, pj, a, H);
         runner_iact_sink(r2, dx, hi, hj, pi, pj, a, H,
                          e->sink_properties->cut_off_radius);
+        runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &c->hydro.xparts[pid], pj, &c->hydro.xparts[pjd], 
+                cosmo,e->hydro_properties,e->feedback_props,shell_current,
+                e->physical_constants, e->internal_units, e->cooling_func);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
         runner_iact_timebin(r2, dx, hi, hj, pi, pj, a, H);
@@ -1716,6 +1726,9 @@ void DOPAIR2(struct runner *r, struct cell *ci, struct cell *cj, const int sid,
             runner_iact_star_formation(r2, dx, hi, hj, pi, pj, a, H);
             runner_iact_sink(r2, dx, hi, hj, pi, pj, a, H,
                              e->sink_properties->cut_off_radius);
+            runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &ci->hydro.xparts[sort_i[pid].i], pj, &cj->hydro.xparts[sort_j[pjd].i], 
+                cosmo,e->hydro_properties,e->feedback_props,shell_current,
+                e->physical_constants, e->internal_units, e->cooling_func); 
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
             runner_iact_timebin(r2, dx, hi, hj, pi, pj, a, H);
@@ -1933,6 +1946,9 @@ void DOPAIR2(struct runner *r, struct cell *ci, struct cell *cj, const int sid,
             runner_iact_star_formation(r2, dx, hj, hi, pj, pi, a, H);
             runner_iact_sink(r2, dx, hj, hi, pj, pi, a, H,
                              e->sink_properties->cut_off_radius);
+            runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &ci->hydro.xparts[sort_i[pid].i], pj, &cj->hydro.xparts[sort_j[pjd].i], 
+                cosmo,e->hydro_properties,e->feedback_props,shell_current,
+                e->physical_constants, e->internal_units, e->cooling_func); 
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
             runner_iact_timebin(r2, dx, hj, hi, pj, pi, a, H);
@@ -2155,6 +2171,9 @@ void DOSELF1(struct runner *r, struct cell *restrict c) {
           runner_iact_nonsym_star_formation(r2, dx, hj, hi, pj, pi, a, H);
           runner_iact_nonsym_sink(r2, dx, hj, hi, pj, pi, a, H,
                                   e->sink_properties->cut_off_radius);
+          runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &c->hydro.xparts[pid], pj, &c->hydro.xparts[pjd], 
+                cosmo,e->hydro_properties,e->feedback_props,shell_current,
+                e->physical_constants, e->internal_units, e->cooling_func);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
           runner_iact_nonsym_timebin(r2, dx, hj, hi, pj, pi, a, H);
@@ -2217,6 +2236,9 @@ void DOSELF1(struct runner *r, struct cell *restrict c) {
             runner_iact_star_formation(r2, dx, hi, hj, pi, pj, a, H);
             runner_iact_sink(r2, dx, hi, hj, pi, pj, a, H,
                              e->sink_properties->cut_off_radius);
+            runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &c->hydro.xparts[pid], pj, &c->hydro.xparts[pjd], 
+                cosmo,e->hydro_properties,e->feedback_props,shell_current,
+                e->physical_constants, e->internal_units, e->cooling_func);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
             runner_iact_timebin(r2, dx, hi, hj, pi, pj, a, H);
@@ -2456,6 +2478,9 @@ void DOSELF2(struct runner *r, struct cell *restrict c) {
             runner_iact_star_formation(r2, dx, hi, hj, pi, pj, a, H);
             runner_iact_sink(r2, dx, hi, hj, pi, pj, a, H,
                              e->sink_properties->cut_off_radius);
+            runner_iact_sym_wind_hydro(r2, dx, hi, hj, pi, &c->hydro.xparts[pid], pj, &c->hydro.xparts[pjd], 
+                cosmo,e->hydro_properties,e->feedback_props,shell_current,
+                e->physical_constants, e->internal_units, e->cooling_func);
 #endif
 #if (FUNCTION_TASK_LOOP == TASK_LOOP_FORCE)
             runner_iact_timebin(r2, dx, hi, hj, pi, pj, a, H);

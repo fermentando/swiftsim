@@ -31,6 +31,7 @@
 #include "cooling.h"
 #include "grackle.h"
 #include "hydro.h"
+#include "feedback_properties.h"
 
 
 /**
@@ -595,8 +596,7 @@ runner_iact_sym_wind_hydro(
     const integertime_t ti_current,
     
     const struct phys_const* phys_const,
-    const struct unit_system* us, const struct cooling_function_data* cooling, 
-    FILE *fp) {
+    const struct unit_system* us, const struct cooling_function_data* cooling) {
 
 
   /* Ignore COUPLED particles */
@@ -715,33 +715,50 @@ runner_iact_sym_wind_hydro(
   
   } 
 
-  /* Change in properties of wind and surroundings as it travels: 
+  /* Change in properties of wind and surroundings as it travels: */
 
-   * 1) Update chemistry */
-  for (int elem = 0; elem < chemistry_element_count; ++elem) { 
-    pi->chemistry_data.metal_mass_fraction[elem]  = wi* 1/pi->mass * ((pi->mass - delta_m)* pi->chemistry_data.metal_mass_fraction[elem] + delta_m * pj->chemistry_data.metal_mass_fraction[elem]);
-    pj->chemistry_data.metal_mass_fraction[elem]  = wi * 1/pj->mass * ((pj->mass - delta_m)* pj->chemistry_data.metal_mass_fraction[elem] + delta_m * pi->chemistry_data.metal_mass_fraction[elem]);
+  /* Change in properties of wind and surroundings as it travels */
 
+  /* set weights for averaging i and j */
+  float pii_weight = wi * (pi->mass - delta_m) / pi->mass;
+  float pij_weight = wi * delta_m / pi->mass;
+  float pji_weight = wi * delta_m / pj->mass;
+  float pjj_weight = wi * (pj->mass - delta_m) / pj->mass;
+
+  /* 1) Update chemistry */
+  pi->chemistry_data.metal_mass_fraction_total = 0;
+  pj->chemistry_data.metal_mass_fraction_total = 0;
+  float pi_metal_frac, pi_dust_frac;
+  for (int elem = 0; elem < chemistry_element_count; ++elem) {
+    pi_metal_frac = pi->chemistry_data.metal_mass_fraction[elem];
+    pi->chemistry_data.metal_mass_fraction[elem] = (pii_weight * pi->mass * pi->chemistry_data.metal_mass_fraction[elem] + pij_weight * pj->mass * pj->chemistry_data.metal_mass_fraction[elem]) / pi->mass;
+    pj->chemistry_data.metal_mass_fraction[elem] = (pjj_weight * pj->mass * pj->chemistry_data.metal_mass_fraction[elem] + pji_weight * pi->mass * pi_metal_frac) / pj->mass;
+    if ( elem > chemistry_element_He ) {
+    pi->chemistry_data.metal_mass_fraction_total += pi->chemistry_data.metal_mass_fraction[elem];
+    pj->chemistry_data.metal_mass_fraction_total += pj->chemistry_data.metal_mass_fraction[elem];
+    }
+    pi_dust_frac = pi->cooling_data.dust_mass_fraction[elem];
+    pi->cooling_data.dust_mass_fraction[elem] = (pii_weight * pi->mass * pi->cooling_data.dust_mass_fraction[elem] + pij_weight * pj->mass * pj->cooling_data.dust_mass_fraction[elem]) / pi->mass;
+    pj->cooling_data.dust_mass_fraction[elem] = (pjj_weight * pj->mass * pj->cooling_data.dust_mass_fraction[elem] + pji_weight * pi->mass * pi_dust_frac) / pj->mass;
   }
-  
-  float pi_dust_m_fraction = *(pi->cooling_data.dust_mass_fraction);
-  float pj_dust_m_fraction = *(pj->cooling_data.dust_mass_fraction);
- 
-  *(pi->cooling_data.dust_mass_fraction)  = wi* 1/pi->mass * ((pi->mass - delta_m) * pi_dust_m_fraction + delta_m * pj_dust_m_fraction);
-  *(pj->cooling_data.dust_mass_fraction)  = wi * 1/pj->mass * ((pj->mass - delta_m) * pj_dust_m_fraction + delta_m * pi_dust_m_fraction);
+  float pi_dust_mass = pi->cooling_data.dust_mass;
+  pi->cooling_data.dust_mass = pii_weight * pi_dust_mass + pij_weight * pj->cooling_data.dust_mass;
+  pj->cooling_data.dust_mass = pji_weight * pi_dust_mass + pjj_weight * pj->cooling_data.dust_mass;
 
-   /* 2) Update particles' internal energy */
-   pi->u = wi * 1/pi->mass * ((pi->mass - delta_m)*pi->u + delta_m * pj->u);
-   pj->u = wi * 1/pj->mass * ((pj->mass - delta_m)*pj->u + delta_m * pi->u);
+  /* 2) Update particles' internal energy per unit mass */
+  float pi_u = pi->u;
+  pi->u = (pii_weight * pi->mass * pi_u + pij_weight * pj->mass * pj->u) / pi->mass;
+  pj->u = (pji_weight * pi->mass * pi_u + pjj_weight * pj->mass * pj->u) / pj->mass;
 
 
-   /* 3) Conserve momentum */
+    /* 3) Conserve momentum */
   float stream_post_v2 = 0;
   float surroundings_post_v2 = 0;
+  float pi_vfull;
   for (int i=0; i<3; i++){
-
-    pi->v_full[i] = wi * 1/pi->mass * ((pi->mass - delta_m)*pi->v_full[i] + delta_m * pj->v_full[i]);
-    pj->v_full[i] = wi * 1/pj->mass * ((pj->mass - delta_m)*pj->v_full[i] + delta_m * pi->v_full[i]);
+    pi_vfull = pi->v_full[i];
+    pi->v_full[i] = (pii_weight * pi->mass * pi_vfull + pij_weight * pj->mass * pj->v_full[i]) / pi->mass;
+    pj->v_full[i] = (pji_weight * pi->mass * pi_vfull + pjj_weight * pj->mass * pj->v_full[i]) / pj->mass;
 
     stream_post_v2 += pi->v_full[i]*pi->v_full[i];
     surroundings_post_v2 += pj->v_full[i]*pj->v_full[i];
@@ -758,12 +775,19 @@ runner_iact_sym_wind_hydro(
   pi->feedback_data.radius_stream = sqrt(virtual_mass/M_PI/chi/rho_j);
 
     /* Dust destruction */
+
   float rho_dust = pi->cooling_data.dust_mass * kernel_root *hi_inv;
   float tsp = cooling->dust_grainsize * 3.2e-18 / (pow(us->UnitLength_in_cgs, 4) / us->UnitTime_in_cgs) *
     rho_dust/phys_const->const_proton_mass / (pow(2e6/us->UnitTemperature_in_cgs/Tstream, 2.5) +1);
   
   float delta_rho = -3*rho_dust/tsp*dt;
+  float dust_mass_ratio = 1./pi->cooling_data.dust_mass;
   pi->cooling_data.dust_mass += delta_rho / (kernel_root *hi_inv);
+  if (pi->cooling_data.dust_mass < 0.) pi->cooling_data.dust_mass = 0.;
+  dust_mass_ratio *= pi->cooling_data.dust_mass; // factor by which dust mass changed
+  for (int elem = 0; elem < chemistry_element_count; ++elem) {
+    pi->cooling_data.dust_mass_fraction[elem] *= dust_mass_ratio;
+  }
 
   /* Recouple if Mach < 1 */
   if (Mach < 1 )pi->feedback_data.decoupling_delay_time = 0.f;
